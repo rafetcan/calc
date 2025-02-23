@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "720882125679",
+    "project_id": "feedback-appss",
+    "storage_bucket": "feedback-appss.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:720882125679:android:e1d86b07aaf8b54428b69a",
+        "android_client_info": {
+          "package_name": "com.akidesoft.calc"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEFgW_Y-AgM2h2SaduW86xeCRC2C0slrs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,13 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /calculator_feedback/{feedback} {
+      allow write: if request.auth == null 
+        && request.resource.data.keys().hasAll(['type', 'message', 'email', 'deviceInfo', 'appVersion', 'timestamp'])
+        && request.resource.data.type in ['bug', 'suggestion']
+        && request.resource.data.message.size() <= 1000
+        && request.resource.data.email.matches('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$');
+      allow read: if false;
+    }
+  }
+} 
