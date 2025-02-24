@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import '../models/calculator_model.dart';
-import '../services/ad_service.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CalculatorViewModel extends ChangeNotifier {
-  final AdService _adService = AdService();
   CalculatorModel _model = CalculatorModel();
   final List<String> _history = [];
   bool _isScreenLocked = false;
@@ -17,22 +14,16 @@ class CalculatorViewModel extends ChangeNotifier {
 
   String get expression => _model.expression;
   String get result => _model.result;
-  BannerAd? get bannerAd => _adService.bannerAd;
   List<String> get history => _history;
   bool get isScreenLocked => _isScreenLocked;
 
   CalculatorViewModel() {
-    _initAds();
+    // _initAds() metodunu kaldır
   }
 
-  void _initAds() {
-    _adService.loadBannerAd(
-      onAdLoaded: () => notifyListeners(),
-      onAdFailedToLoad: (_) {},
-    );
-  }
+  void onButtonPressed(String buttonText, BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
 
-  void onButtonPressed(String buttonText) {
     // Rate limiting
     if (_lastOperation != null) {
       final timeSinceLastOp = DateTime.now().difference(_lastOperation!);
@@ -49,7 +40,7 @@ class CalculatorViewModel extends ChangeNotifier {
           break;
         case '=':
           if (_model.expression.isEmpty) {
-            _model = _model.copyWith(result: 'İfade boş');
+            _model = _model.copyWith(result: l10n.expressionEmpty);
             break;
           }
           try {
@@ -61,13 +52,11 @@ class CalculatorViewModel extends ChangeNotifier {
               expression: formattedResult,
             );
           } catch (e) {
-            String errorMessage = 'Hata';
-            if (e.toString().contains('Sıfıra bölme')) {
-              errorMessage = 'Sıfıra bölünemez';
-            } else if (e.toString().contains('Parantez')) {
-              errorMessage = 'Parantez hatası';
-            } else if (e.toString().contains('Format')) {
-              errorMessage = 'Geçersiz format';
+            String errorMessage = l10n.formatError;
+            if (e.toString().contains('division by zero')) {
+              errorMessage = l10n.divisionByZero;
+            } else if (e.toString().contains('parenthesis')) {
+              errorMessage = l10n.parenthesisError;
             }
             _model = _model.copyWith(result: errorMessage);
           }
@@ -173,8 +162,13 @@ class CalculatorViewModel extends ChangeNotifier {
           _model = _model.copyWith(expression: _model.expression + buttonText);
       }
     } catch (e) {
-      debugPrint('Calculator Error: $e'); // Güvenli loglama
-      _model = _model.copyWith(result: 'Hata');
+      String errorMessage = l10n.formatError;
+      if (e.toString().contains('division by zero')) {
+        errorMessage = l10n.divisionByZero;
+      } else if (e.toString().contains('parenthesis')) {
+        errorMessage = l10n.parenthesisError;
+      }
+      _model = _model.copyWith(result: errorMessage);
     }
     notifyListeners();
   }
@@ -300,9 +294,9 @@ class CalculatorViewModel extends ChangeNotifier {
   void toggleScreenLock() {
     _isScreenLocked = !_isScreenLocked;
     if (_isScreenLocked) {
-      WakelockPlus.enable();
+      // WakelockPlus.enable();
     } else {
-      WakelockPlus.disable();
+      // WakelockPlus.disable();
     }
     notifyListeners();
   }
@@ -330,8 +324,7 @@ class CalculatorViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
-    WakelockPlus.disable();
-    _adService.dispose();
+    // AdService dispose'unu kaldır
     super.dispose();
   }
 }

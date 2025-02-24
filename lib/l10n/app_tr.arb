@@ -1,0 +1,34 @@
+{
+    "appName": "Hesap Makinesi",
+    "@appName": {
+        "description": "Hesap Makinesi Reklamsız Karanlık Mod. Günlük kullanım için basit ve verimli hesap makinesi."
+    },
+    "history": "Geçmiş",
+    "feedback": "Geri Bildirim",
+    "bug": "Hata",
+    "suggestion": "Öneri",
+    "cancel": "İptal",
+    "send": "Gönder",
+    "email": "E-posta Adresiniz",
+    "emailHint": "ornek@email.com",
+    "bugDescription": "Hatayı detaylı açıklayın...",
+    "suggestionDescription": "Önerinizi detaylı açıklayın...",
+    "errorEmptyMessage": "Lütfen bir mesaj girin",
+    "errorEmptyEmail": "Lütfen e-posta adresinizi girin",
+    "errorInvalidEmail": "Geçerli bir e-posta adresi girin",
+    "errorSendingFeedback": "Geri bildirim gönderilemedi",
+    "thankYouFeedback": "Geri bildiriminiz için teşekkürler",
+    "waitMinutes": "Lütfen {minutes} dakika bekleyin",
+    "@waitMinutes": {
+        "placeholders": {
+            "minutes": {
+                "type": "int"
+            }
+        }
+    },
+    "divisionByZero": "Sıfıra bölme hatası",
+    "parenthesisError": "Parantez hatası",
+    "formatError": "Geçersiz format",
+    "expressionEmpty": "İfade boş",
+    "clear": "Temizle"
+} 

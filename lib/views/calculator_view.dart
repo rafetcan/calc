@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import '../viewmodels/calculator_viewmodel.dart';
 import '../providers/theme_provider.dart';
 import '../views/feedback_dialog.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CalculatorView extends StatelessWidget {
   const CalculatorView({super.key});
 
   void _showHistory(BuildContext context) {
     final viewModel = context.read<CalculatorViewModel>();
+    final l10n = AppLocalizations.of(context)!;
+
     showModalBottomSheet(
       context: context,
       builder:
@@ -20,9 +22,9 @@ class CalculatorView extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      'Geçmiş',
-                      style: TextStyle(
+                    Text(
+                      l10n.history,
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
@@ -86,7 +88,7 @@ class CalculatorView extends StatelessWidget {
             ),
             padding: const EdgeInsets.all(20),
           ),
-          onPressed: () => viewModel.onButtonPressed(text),
+          onPressed: () => viewModel.onButtonPressed(text, context),
           child: Text(
             text,
             style: TextStyle(
@@ -276,8 +278,9 @@ class CalculatorView extends StatelessWidget {
                                   '+/-',
                                   textColor: Colors.red,
                                 ),
-                                _buildButton(context, '.'),
+
                                 _buildButton(context, '0'),
+                                _buildButton(context, '.'),
                                 _buildButton(
                                   context,
                                   '=',
@@ -287,21 +290,6 @@ class CalculatorView extends StatelessWidget {
                               ],
                             ),
                           ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 50,
-                        child: Consumer<CalculatorViewModel>(
-                          builder: (context, viewModel, _) {
-                            final bannerAd = viewModel.bannerAd;
-                            if (bannerAd == null) return const SizedBox();
-                            return Container(
-                              alignment: Alignment.center,
-                              width: bannerAd.size.width.toDouble(),
-                              height: bannerAd.size.height.toDouble(),
-                              child: AdWidget(ad: bannerAd),
-                            );
-                          },
                         ),
                       ),
                     ],

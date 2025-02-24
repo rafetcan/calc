@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/feedback_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class FeedbackDialog extends StatefulWidget {
   const FeedbackDialog({super.key});
@@ -24,18 +25,20 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
   }
 
   Future<void> _submitFeedback() async {
+    final l10n = AppLocalizations.of(context)!;
+
     if (_messageController.text.trim().isEmpty) {
-      setState(() => _errorMessage = 'Lütfen bir mesaj girin');
+      setState(() => _errorMessage = l10n.errorEmptyMessage);
       return;
     }
 
     if (_emailController.text.trim().isEmpty) {
-      setState(() => _errorMessage = 'Lütfen e-posta adresinizi girin');
+      setState(() => _errorMessage = l10n.errorEmptyEmail);
       return;
     }
 
     if (!_isValidEmail(_emailController.text.trim())) {
-      setState(() => _errorMessage = 'Geçerli bir e-posta adresi girin');
+      setState(() => _errorMessage = l10n.errorInvalidEmail);
       return;
     }
 
@@ -53,8 +56,8 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
       if (mounted) {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Geri bildiriminiz için teşekkürler'),
+          SnackBar(
+            content: Text(l10n.thankYouFeedback),
             backgroundColor: Colors.green,
           ),
         );
@@ -76,6 +79,8 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
@@ -83,22 +88,19 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              'Geri Bildirim',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
+            Text(l10n.feedback, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 16),
             SegmentedButton<String>(
-              segments: const [
+              segments: [
                 ButtonSegment(
                   value: 'bug',
-                  icon: Icon(Icons.bug_report),
-                  label: Text('Hata'),
+                  icon: const Icon(Icons.bug_report),
+                  label: Text(l10n.bug),
                 ),
                 ButtonSegment(
                   value: 'suggestion',
-                  icon: Icon(Icons.lightbulb),
-                  label: Text('Öneri'),
+                  icon: const Icon(Icons.lightbulb),
+                  label: Text(l10n.suggestion),
                 ),
               ],
               selected: {_selectedType},
@@ -109,10 +111,10 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
             const SizedBox(height: 16),
             TextField(
               controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: 'E-posta Adresiniz',
-                hintText: 'ornek@email.com',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.email,
+                hintText: l10n.emailHint,
+                border: const OutlineInputBorder(),
               ),
               keyboardType: TextInputType.emailAddress,
             ),
@@ -123,8 +125,8 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
               decoration: InputDecoration(
                 hintText:
                     _selectedType == 'bug'
-                        ? 'Hatayı detaylı açıklayın...'
-                        : 'Önerinizi detaylı açıklayın...',
+                        ? l10n.bugDescription
+                        : l10n.suggestionDescription,
                 border: const OutlineInputBorder(),
               ),
             ),
@@ -142,19 +144,15 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
               children: [
                 TextButton(
                   onPressed: _isLoading ? null : () => Navigator.pop(context),
-                  child: const Text('İptal'),
+                  child: Text(l10n.cancel),
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton(
                   onPressed: _isLoading ? null : _submitFeedback,
                   child:
                       _isLoading
-                          ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                          : const Text('Gönder'),
+                          ? const CircularProgressIndicator()
+                          : Text(l10n.send),
                 ),
               ],
             ),
