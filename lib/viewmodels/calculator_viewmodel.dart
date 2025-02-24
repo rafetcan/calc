@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import '../models/calculator_model.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CalculatorViewModel extends ChangeNotifier {
   CalculatorModel _model = CalculatorModel();
   final List<String> _history = [];
-  bool _isScreenLocked = false;
   final _numberFormat = NumberFormat('#,###', 'tr_TR');
   DateTime? _lastOperation;
   static const _minOperationInterval = Duration(milliseconds: 100);
@@ -15,7 +13,6 @@ class CalculatorViewModel extends ChangeNotifier {
   String get expression => _model.expression;
   String get result => _model.result;
   List<String> get history => _history;
-  bool get isScreenLocked => _isScreenLocked;
 
   CalculatorViewModel() {
     // _initAds() metodunu kaldır
@@ -88,41 +85,43 @@ class CalculatorViewModel extends ChangeNotifier {
           break;
         case '+/-':
           if (_model.expression.isEmpty) {
-            _model = _model.copyWith(result: 'İfade boş');
+            _model = _model.copyWith(result: l10n.expressionEmpty);
             break;
           }
+
           try {
-            // Son sayıyı bul ve işaretini değiştir
             String expr = _model.expression;
-            int lastIndex = expr.length - 1;
 
-            // Son karakterden geriye doğru sayı olmayan karakteri bul
-            while (lastIndex >= 0 &&
-                (isDigit(expr[lastIndex]) || expr[lastIndex] == '.')) {
-              lastIndex--;
-            }
-
-            if (lastIndex < 0) {
-              // Tüm ifade bir sayı
+            // Eğer ifade sadece bir sayıdan oluşuyorsa
+            if (!expr.contains(RegExp(r'[+\-×÷]'))) {
               _model = _model.copyWith(
                 expression: expr.startsWith('-') ? expr.substring(1) : '-$expr',
               );
-            } else {
-              // Sayı operatörden sonra geliyor
-              String beforeNumber = expr.substring(0, lastIndex + 1);
-              String number = expr.substring(lastIndex + 1);
-              if (number.startsWith('-')) {
-                _model = _model.copyWith(
-                  expression: beforeNumber + number.substring(1),
-                );
-              } else {
-                _model = _model.copyWith(
-                  expression: beforeNumber + '-' + number,
-                );
+              break;
+            }
+
+            // Son operatörün konumunu bul
+            int lastOperatorIndex = -1;
+            for (int i = expr.length - 1; i >= 0; i--) {
+              if (_isOperator(expr[i])) {
+                lastOperatorIndex = i;
+                break;
               }
             }
+
+            // Eğer son karakter operatörse işlem yapma
+            if (lastOperatorIndex == expr.length - 1) break;
+
+            String beforeOperator = expr.substring(0, lastOperatorIndex + 1);
+            String number = expr.substring(lastOperatorIndex + 1);
+
+            // Sayının işaretini değiştir
+            String newNumber =
+                number.startsWith('-') ? number.substring(1) : '-$number';
+
+            _model = _model.copyWith(expression: beforeOperator + newNumber);
           } catch (e) {
-            _model = _model.copyWith(result: 'İşaret değiştirilemedi');
+            _model = _model.copyWith(result: l10n.formatError);
           }
           break;
         case '.':
@@ -199,17 +198,14 @@ class CalculatorViewModel extends ChangeNotifier {
 
   double _evaluateExpression(String expression) {
     try {
-      expression = expression.replaceAll('×', '*');
-      expression = expression.replaceAll('÷', '/');
+      // × ve ÷ işaretlerini * ve / ile değiştir
+      expression = expression.replaceAll('×', '*').replaceAll('÷', '/');
 
-      // Negatif sayıları işle
-      expression = expression.replaceAll('--', '+');
-
-      // İşlem önceliği için parantezleri kontrol et
+      // Parantezleri işle
       while (expression.contains('(') && expression.contains(')')) {
         final openIndex = expression.lastIndexOf('(');
         final closeIndex = expression.indexOf(')', openIndex);
-        if (closeIndex == -1) throw Exception('Parantez hatası');
+        if (closeIndex == -1) throw Exception('parenthesis');
 
         final subExpr = expression.substring(openIndex + 1, closeIndex);
         final result = _calculateBasicExpression(subExpr);
@@ -227,40 +223,75 @@ class CalculatorViewModel extends ChangeNotifier {
 
   double _calculateBasicExpression(String expression) {
     try {
-      // Çarpma ve bölme işlemlerini önce yap
-      List<String> tokens = expression.split(RegExp(r'([+\-*/])'));
-      List<String> operators =
-          expression
-              .split(RegExp(r'[^+\-*/]+'))
-              .where((o) => o.isNotEmpty)
-              .toList();
+      // İfadeyi tokenlara ayır
+      List<String> tokens = [];
+      String number = '';
+      bool isNegative = false;
 
-      // İlk sayıyı al
-      double result = double.parse(tokens[0].trim());
+      // İfadeyi parse et
+      for (int i = 0; i < expression.length; i++) {
+        String char = expression[i];
 
-      // Önce çarpma ve bölme
-      for (int i = 0; i < operators.length; i++) {
-        if (operators[i] == '*' || operators[i] == '/') {
-          double number = double.parse(tokens[i + 1].trim());
-          if (operators[i] == '*') {
-            result *= number;
-          } else {
-            if (number == 0) throw Exception('Sıfıra bölme hatası');
-            result /= number;
-          }
-          // İşlenen sayıları ve operatörleri kaldır
-          tokens.removeAt(i + 1);
-          operators.removeAt(i);
-          i--;
+        // Boşlukları atla
+        if (char.trim().isEmpty) continue;
+
+        // Sayı veya nokta ise
+        if (isDigit(char) || char == '.') {
+          number += char;
+          continue;
+        }
+
+        // Sayı bittiyse listeye ekle
+        if (number.isNotEmpty) {
+          tokens.add(isNegative ? '-$number' : number);
+          number = '';
+          isNegative = false;
+        }
+
+        // Operatör kontrolü
+        if (char == '-' &&
+            (tokens.isEmpty || tokens.last == '*' || tokens.last == '/')) {
+          isNegative = true;
+        } else if (_isOperator(char) || char == '*' || char == '/') {
+          tokens.add(char);
         }
       }
 
-      // Sonra toplama ve çıkarma
-      for (int i = 0; i < operators.length; i++) {
-        double number = double.parse(tokens[i + 1].trim());
-        if (operators[i] == '+') {
+      // Son sayıyı ekle
+      if (number.isNotEmpty) {
+        tokens.add(isNegative ? '-$number' : number);
+      }
+
+      // Çarpma ve bölme işlemlerini yap
+      int i = 0;
+      while (i < tokens.length) {
+        if (tokens[i] == '*' || tokens[i] == '/') {
+          double num1 = double.parse(tokens[i - 1]);
+          double num2 = double.parse(tokens[i + 1]);
+          double result;
+
+          if (tokens[i] == '*') {
+            result = num1 * num2;
+          } else {
+            if (num2 == 0) throw Exception('division by zero');
+            result = num1 / num2;
+          }
+
+          tokens[i - 1] = result.toString();
+          tokens.removeAt(i);
+          tokens.removeAt(i);
+        } else {
+          i++;
+        }
+      }
+
+      // Toplama ve çıkarma işlemlerini yap
+      double result = double.parse(tokens[0]);
+      for (i = 1; i < tokens.length - 1; i += 2) {
+        double number = double.parse(tokens[i + 1]);
+        if (tokens[i] == '+') {
           result += number;
-        } else if (operators[i] == '-') {
+        } else if (tokens[i] == '-') {
           result -= number;
         }
       }
@@ -291,16 +322,6 @@ class CalculatorViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void toggleScreenLock() {
-    _isScreenLocked = !_isScreenLocked;
-    if (_isScreenLocked) {
-      // WakelockPlus.enable();
-    } else {
-      // WakelockPlus.disable();
-    }
-    notifyListeners();
-  }
-
   bool isDigit(String char) {
     return RegExp(r'[0-9]').hasMatch(char);
   }
@@ -320,11 +341,5 @@ class CalculatorViewModel extends ChangeNotifier {
     // Son sayıyı kontrol et
     String lastNumber = expr.substring(lastOperatorIndex + 1);
     return lastNumber.contains('.');
-  }
-
-  @override
-  void dispose() {
-    // AdService dispose'unu kaldır
-    super.dispose();
   }
 }

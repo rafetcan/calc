@@ -6,6 +6,7 @@
 build/
 android/app/google-services.json
 .cursorrules
+android/key.properties
 # If you're building an application, you may want to check-in your pubspec.lock
 pubspec.lock
 

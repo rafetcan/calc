@@ -150,23 +150,6 @@ class CalculatorView extends StatelessWidget {
                                         () => themeProvider.toggleTheme(),
                                   ),
                             ),
-                            Consumer<CalculatorViewModel>(
-                              builder:
-                                  (context, viewModel, _) => IconButton(
-                                    icon: Icon(
-                                      viewModel.isScreenLocked
-                                          ? Icons.screen_lock_portrait
-                                          : Icons.screen_lock_portrait_outlined,
-                                      color:
-                                          Theme.of(context).brightness ==
-                                                  Brightness.dark
-                                              ? Colors.white
-                                              : Colors.black,
-                                    ),
-                                    onPressed:
-                                        () => viewModel.toggleScreenLock(),
-                                  ),
-                            ),
                             IconButton(
                               icon: Icon(
                                 Icons.feedback,
@@ -228,11 +211,6 @@ class CalculatorView extends StatelessWidget {
                                   '÷',
                                   textColor: Colors.green,
                                 ),
-                                _buildButton(
-                                  context,
-                                  '⌫',
-                                  textColor: Colors.red,
-                                ),
                               ],
                             ),
                             Row(
@@ -273,9 +251,16 @@ class CalculatorView extends StatelessWidget {
                             ),
                             Row(
                               children: [
+                                /*
                                 _buildButton(
                                   context,
                                   '+/-',
+                                  textColor: Colors.red,
+                                ),
+                                */
+                                _buildButton(
+                                  context,
+                                  '⌫',
                                   textColor: Colors.red,
                                 ),
 
