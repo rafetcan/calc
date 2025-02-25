@@ -1,5 +1,13 @@
 # calc
 
+### How to run
+
+```bash
+flutter pub get
+flutter gen-l10n
+flutter run 
+```
+
 A new calc project.
 
 ## Getting Started
