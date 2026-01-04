@@ -22,17 +22,12 @@ ve bu proje [Semantic Versioning](https://semver.org/lang/tr/) kullanmaktadır.
 - Eski localization dosyaları (`app_en.arb`, `app_tr.arb`)
 
 
-## [1.1.1] - 2026-01-11
-- [Yeni] İcon
-- [Yeni] Kopyala / Yapıştır özelliği (Kullanıcı isteği)
 
-- [Düzeltme] Rota işlemleri iyileiştirildi.
-
-
-
-## [1.1.0] - 2025-11-24
+## [1.1.0] - 2025-12-04
 - [Yeni] Tema
 - [Yeni] Android için hızlı erişim (App Shortcuts) eklendi. (Kullanıcı isteği)
+- [Yeni] İcon
+- [Yeni] Kopyala / Yapıştır özelliği (Kullanıcı isteği)
 
 - [Düzeltme] Rota işlemleri iyileiştirildi.
 
