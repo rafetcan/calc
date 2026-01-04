@@ -1,0 +1,58 @@
+{
+    "app": {
+        "title": "Calculator",
+        "settings": "Settings",
+        "history": "History"
+    },
+    "calculator": {
+        "clear": "C",
+        "error": "Error",
+        "error.too_long": "Expression too long",
+        "error.unmatched_parentheses": "Unmatched parentheses",
+        "error.invalid_paste": "Invalid paste - only numbers and mathematical operations are accepted",
+        "memory": {
+            "add": "M+",
+            "subtract": "M-",
+            "recall": "MR",
+            "clear": "MC"
+        }
+    },
+    "settings": {
+        "language": "Language",
+        "theme": {
+            "title": "Theme",
+            "light": "Light",
+            "dark": "Dark",
+            "system": "System"
+        }
+    },
+    "history": {
+        "title": "History",
+        "clear": "Clear History",
+        "empty": "History is empty"
+    },
+    "feedback": {
+        "title": "Feedback",
+        "type": "Type",
+        "type.bug": "Bug Report",
+        "type.feature": "Feature Request",
+        "type.other": "Other",
+        "message": "Message",
+        "email": "Email (optional)",
+        "submit": "Submit",
+        "success": "Thank you for your feedback!",
+        "error": {
+            "message_required": "Please enter a message",
+            "invalid_email": "Invalid email address"
+        }
+    },
+    "common": {
+        "cancel": "Cancel",
+        "copy": "Copy",
+        "paste": "Paste"
+    },
+    "theme": {
+        "light": "Light Theme",
+        "dark": "Dark Theme"
+    }
+}

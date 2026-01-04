@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Hesap Makinesi</string>
+    <string name="shortcut_calculator">Hesap Makinesi</string>
+    <string name="shortcut_calculator_long">Hesap Makinesini Aç</string>
+    <string name="shortcut_history">Geçmiş</string>
+    <string name="shortcut_history_long">İşlem Geçmişini Görüntüle</string>
+    <string name="shortcut_feedback">Geri Bildirim</string>
+    <string name="shortcut_feedback_long">Geri Bildirim Gönder</string>
 </resources> 

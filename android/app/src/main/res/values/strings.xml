@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Calculator</string>
+    <string name="shortcut_calculator">Calculator</string>
+    <string name="shortcut_calculator_long">Open Calculator</string>
+    <string name="shortcut_history">History</string>
+    <string name="shortcut_history_long">View Calculation History</string>
+    <string name="shortcut_feedback">Feedback</string>
+    <string name="shortcut_feedback_long">Send Feedback</string>
 </resources> 

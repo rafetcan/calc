@@ -1,0 +1,54 @@
+{
+    "app": {
+        "title": "Hesap Makinesi",
+        "settings": "Ayarlar",
+        "history": "Geçmiş"
+    },
+    "calculator": {
+        "clear": "C",
+        "error": "Hata",
+        "error.too_long": "İfade çok uzun",
+        "error.unmatched_parentheses": "Eşleşmeyen parantezler",
+        "error.invalid_paste": "Geçersiz yapıştırma - yalnızca sayılar ve matematiksel işlemler kabul edilir",
+        "memory": {
+            "add": "M+",
+            "subtract": "M-",
+            "recall": "MR",
+            "clear": "MC"
+        }
+    },
+    "settings": {
+        "language": "Dil",
+        "theme": {
+            "title": "Tema",
+            "light": "Açık",
+            "dark": "Koyu",
+            "system": "Sistem"
+        }
+    },
+    "history": {
+        "title": "Geçmiş",
+        "clear": "Geçmişi Temizle",
+        "empty": "Geçmiş boş"
+    },
+    "feedback": {
+        "title": "Geri Bildirim",
+        "type": "Tür",
+        "type.bug": "Hata Bildirimi",
+        "type.feature": "Özellik İsteği",
+        "type.other": "Diğer",
+        "message": "Mesaj",
+        "email": "E-posta (isteğe bağlı)",
+        "submit": "Gönder",
+        "success": "Geri bildiriminiz için teşekkürler!",
+        "error": {
+            "message_required": "Lütfen bir mesaj girin",
+            "invalid_email": "Geçersiz e-posta adresi"
+        }
+    },
+    "common": {
+        "cancel": "İptal",
+        "copy": "Kopyala",
+        "paste": "Yapıştır"
+    }
+}

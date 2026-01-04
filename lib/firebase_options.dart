@@ -17,13 +17,19 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -46,29 +52,11 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAaESM7Axb9uo1j19KsBBVmM-lK7rypMzY',
-    appId: '1:720882125679:web:c58e3b3e73ccb07728b69a',
-    messagingSenderId: '720882125679',
-    projectId: 'feedback-appss',
-    authDomain: 'feedback-appss.firebaseapp.com',
-    storageBucket: 'feedback-appss.firebasestorage.app',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDEFgW_Y-AgM2h2SaduW86xeCRC2C0slrs',
     appId: '1:720882125679:android:e1d86b07aaf8b54428b69a',
     messagingSenderId: '720882125679',
     projectId: 'feedback-appss',
     storageBucket: 'feedback-appss.firebasestorage.app',
-  );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCBiMnY4tNiFlHtH7D6YJn9VXC31MCeC9Q',
-    appId: '1:720882125679:ios:e8e97f7bc925da4128b69a',
-    messagingSenderId: '720882125679',
-    projectId: 'feedback-appss',
-    storageBucket: 'feedback-appss.firebasestorage.app',
-    iosBundleId: 'e',
   );
 }

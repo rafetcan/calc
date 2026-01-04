@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="calculator"
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher"
+        android:shortcutShortLabel="@string/shortcut_calculator"
+        android:shortcutLongLabel="@string/shortcut_calculator_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.akidesoft.calc"
+            android:targetClass="com.akidesoft.calc.MainActivity"
+            android:data="calc://calculator" />
+    </shortcut>
+    
+    <shortcut
+        android:shortcutId="history"
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher"
+        android:shortcutShortLabel="@string/shortcut_history"
+        android:shortcutLongLabel="@string/shortcut_history_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.akidesoft.calc"
+            android:targetClass="com.akidesoft.calc.MainActivity"
+            android:data="calc://history" />
+    </shortcut>
+    
+    <shortcut
+        android:shortcutId="feedback"
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher"
+        android:shortcutShortLabel="@string/shortcut_feedback"
+        android:shortcutLongLabel="@string/shortcut_feedback_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.akidesoft.calc"
+            android:targetClass="com.akidesoft.calc.MainActivity"
+            android:data="calc://feedback" />
+    </shortcut>
+</shortcuts>
+
