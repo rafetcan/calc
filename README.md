@@ -6,7 +6,7 @@ Modern, çok dilli ve kullanıcı dostu bir Flutter hesap makinesi uygulaması.
 
 - 📱 Responsive tasarım
 - 🌙 Dark/Light mode desteği
-- 🌍 Çoklu dil desteği (TR/EN)
+- 🌍 Çoklu dil desteği (TR/EN/ZH/ES/Hİ)
 - 📊 İşlem geçmişi
 - 🐛 Hata bildirimi sistemi
 - 💾 Yerel veri depolama
