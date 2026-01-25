@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">计算器</string>
+    <string name="shortcut_calculator">计算器</string>
+    <string name="shortcut_calculator_long">打开计算器</string>
+    <string name="shortcut_history">历史</string>
+    <string name="shortcut_history_long">查看计算历史</string>
+    <string name="shortcut_feedback">反馈</string>
+    <string name="shortcut_feedback_long">发送反馈</string>
+</resources>

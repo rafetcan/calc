@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../core/services/theme_service.dart';
 import '../services/history_service.dart';
+import '../models/calculation_history.dart';
 import 'history_view.dart';
 import '../../feedback/services/feedback_service.dart';
 import '../../feedback/views/feedback_dialog.dart';
@@ -33,12 +34,24 @@ class _CalculatorViewState extends State<CalculatorView> {
       } else if (value == '=') {
         try {
           double result = _evaluateExpression(_expression);
+          String resultStr = _formatResultForExpression(result);
           _display = _formatNumber(result);
+
+          // Geçmişe kaydet
+          final historyService = context.read<HistoryService>();
+          historyService.addToHistory(
+            CalculationHistory(
+              expression: _expression,
+              result: resultStr,
+              timestamp: DateTime.now(),
+            ),
+          );
+
           // Sonucu expression'a kaydet (binlik ayracı olmadan)
-          _expression = result.toString();
+          _expression = resultStr;
           _shouldResetDisplay = true;
         } catch (e) {
-          _display = 'Hata';
+          _display = 'calculator.error'.tr();
           _expression = '';
           _shouldResetDisplay = true;
         }
@@ -167,13 +180,13 @@ class _CalculatorViewState extends State<CalculatorView> {
 
       int end = expression.indexOf(')', start);
       if (end == -1) {
-        throw Exception('Parantez hatası: Kapanmayan parantez');
+        throw Exception('calculator.error.missing_parenthesis'.tr());
       }
 
       // Parantez içindeki ifadeyi çöz
       String subExpr = expression.substring(start + 1, end);
       if (subExpr.isEmpty) {
-        throw Exception('Boş parantez');
+        throw Exception('calculator.error.empty_parenthesis'.tr());
       }
 
       // İç içe parantezler için recursive çağrı
@@ -352,8 +365,8 @@ class _CalculatorViewState extends State<CalculatorView> {
           IconButton(
             icon: const Icon(Icons.history),
             tooltip: 'app.history'.tr(),
-            onPressed: () {
-              Navigator.push(
+            onPressed: () async {
+              final result = await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => HistoryView(
@@ -361,6 +374,15 @@ class _CalculatorViewState extends State<CalculatorView> {
                   ),
                 ),
               );
+
+              // Geçmişten bir öğe seçildiyse yükle
+              if (result != null && result is CalculationHistory) {
+                setState(() {
+                  _expression = result.expression;
+                  _display = _formatExpression(result.expression);
+                  _shouldResetDisplay = false;
+                });
+              }
             },
           ),
           Consumer<ThemeService>(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
-import '../viewmodels/calculator_viewmodel.dart';
 import '../models/calculation_history.dart';
 import '../services/history_service.dart';
 
@@ -61,8 +60,7 @@ class _HistoryItem extends StatelessWidget {
         },
       ),
       onTap: () {
-        context.read<CalculatorViewModel>().loadFromHistory(item);
-        Navigator.pop(context);
+        Navigator.pop(context, item);
       },
     );
   }

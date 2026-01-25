@@ -23,6 +23,16 @@ ve bu proje [Semantic Versioning](https://semver.org/lang/tr/) kullanmaktadır.
 
 
 
+## [1.1.1] - 2026-25-01
+- [Yeni] Çinçe, Hintçe, İspanyolca
+
+- [Düzeltildi] Parantez işlemlerinde hataya neden olan sorun düzeltildi.
+- [Düzeltildi] Binlik ve virgül ayraçları iyileştirildi.
+
+- [Kaldırıldı] Kopyala / Yapıştır özelliği (Kullanıcı isteği)
+- [Kaldırıldı] % alma kaldıldı.
+
+
 ## [1.1.0] - 2025-12-04
 - [Yeni] Tema
 - [Yeni] Android için hızlı erişim (App Shortcuts) eklendi. (Kullanıcı isteği)

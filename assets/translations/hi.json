@@ -1,0 +1,60 @@
+{
+    "app": {
+        "title": "कैलकुलेटर",
+        "settings": "सेटिंग्स",
+        "history": "इतिहास"
+    },
+    "calculator": {
+        "clear": "C",
+        "error": "त्रुटि",
+        "error.too_long": "अभिव्यक्ति बहुत लंबी है",
+        "error.unmatched_parentheses": "असंगत कोष्ठक",
+        "error.invalid_paste": "अमान्य पेस्ट - केवल संख्याएं और गणितीय संक्रियाएं स्वीकार की जाती हैं",
+        "error.missing_parenthesis": "कोष्ठक त्रुटि: बंद नहीं हुआ कोष्ठक",
+        "error.empty_parenthesis": "खाली कोष्ठक",
+        "memory": {
+            "add": "M+",
+            "subtract": "M-",
+            "recall": "MR",
+            "clear": "MC"
+        }
+    },
+    "settings": {
+        "language": "भाषा",
+        "theme": {
+            "title": "थीम",
+            "light": "हल्का",
+            "dark": "गहरा",
+            "system": "सिस्टम"
+        }
+    },
+    "history": {
+        "title": "इतिहास",
+        "clear": "इतिहास साफ करें",
+        "empty": "इतिहास खाली है"
+    },
+    "feedback": {
+        "title": "प्रतिक्रिया",
+        "type": "प्रकार",
+        "type.bug": "बग रिपोर्ट",
+        "type.feature": "फीचर अनुरोध",
+        "type.other": "अन्य",
+        "message": "संदेश",
+        "email": "ईमेल (वैकल्पिक)",
+        "submit": "जमा करें",
+        "success": "आपकी प्रतिक्रिया के लिए धन्यवाद!",
+        "error": {
+            "message_required": "कृपया एक संदेश दर्ज करें",
+            "invalid_email": "अमान्य ईमेल पता"
+        }
+    },
+    "common": {
+        "cancel": "रद्द करें",
+        "copy": "कॉपी करें",
+        "paste": "पेस्ट करें"
+    },
+    "theme": {
+        "light": "हल्का थीम",
+        "dark": "गहरा थीम"
+    }
+}

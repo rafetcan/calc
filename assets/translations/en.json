@@ -10,6 +10,8 @@
         "error.too_long": "Expression too long",
         "error.unmatched_parentheses": "Unmatched parentheses",
         "error.invalid_paste": "Invalid paste - only numbers and mathematical operations are accepted",
+        "error.missing_parenthesis": "Parenthesis error: Unclosed parenthesis",
+        "error.empty_parenthesis": "Empty parenthesis",
         "memory": {
             "add": "M+",
             "subtract": "M-",

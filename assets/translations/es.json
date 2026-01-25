@@ -1,0 +1,60 @@
+{
+    "app": {
+        "title": "Calculadora",
+        "settings": "Configuración",
+        "history": "Historial"
+    },
+    "calculator": {
+        "clear": "C",
+        "error": "Error",
+        "error.too_long": "Expresión demasiado larga",
+        "error.unmatched_parentheses": "Paréntesis no coincidentes",
+        "error.invalid_paste": "Pegado inválido - solo se aceptan números y operaciones matemáticas",
+        "error.missing_parenthesis": "Error de paréntesis: Paréntesis sin cerrar",
+        "error.empty_parenthesis": "Paréntesis vacío",
+        "memory": {
+            "add": "M+",
+            "subtract": "M-",
+            "recall": "MR",
+            "clear": "MC"
+        }
+    },
+    "settings": {
+        "language": "Idioma",
+        "theme": {
+            "title": "Tema",
+            "light": "Claro",
+            "dark": "Oscuro",
+            "system": "Sistema"
+        }
+    },
+    "history": {
+        "title": "Historial",
+        "clear": "Limpiar Historial",
+        "empty": "El historial está vacío"
+    },
+    "feedback": {
+        "title": "Comentarios",
+        "type": "Tipo",
+        "type.bug": "Informe de Error",
+        "type.feature": "Solicitud de Función",
+        "type.other": "Otro",
+        "message": "Mensaje",
+        "email": "Correo electrónico (opcional)",
+        "submit": "Enviar",
+        "success": "¡Gracias por tus comentarios!",
+        "error": {
+            "message_required": "Por favor ingresa un mensaje",
+            "invalid_email": "Dirección de correo electrónico inválida"
+        }
+    },
+    "common": {
+        "cancel": "Cancelar",
+        "copy": "Copiar",
+        "paste": "Pegar"
+    },
+    "theme": {
+        "light": "Tema Claro",
+        "dark": "Tema Oscuro"
+    }
+}

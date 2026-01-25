@@ -10,6 +10,8 @@
         "error.too_long": "İfade çok uzun",
         "error.unmatched_parentheses": "Eşleşmeyen parantezler",
         "error.invalid_paste": "Geçersiz yapıştırma - yalnızca sayılar ve matematiksel işlemler kabul edilir",
+        "error.missing_parenthesis": "Parantez hatası: Kapanmayan parantez",
+        "error.empty_parenthesis": "Boş parantez",
         "memory": {
             "add": "M+",
             "subtract": "M-",

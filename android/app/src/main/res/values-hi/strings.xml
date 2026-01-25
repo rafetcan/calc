@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">कैलकुलेटर</string>
+    <string name="shortcut_calculator">कैलकुलेटर</string>
+    <string name="shortcut_calculator_long">कैलकुलेटर खोलें</string>
+    <string name="shortcut_history">इतिहास</string>
+    <string name="shortcut_history_long">गणना इतिहास देखें</string>
+    <string name="shortcut_feedback">प्रतिक्रिया</string>
+    <string name="shortcut_feedback_long">प्रतिक्रिया भेजें</string>
+</resources>

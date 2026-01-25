@@ -1,0 +1,60 @@
+{
+    "app": {
+        "title": "计算器",
+        "settings": "设置",
+        "history": "历史"
+    },
+    "calculator": {
+        "clear": "C",
+        "error": "错误",
+        "error.too_long": "表达式太长",
+        "error.unmatched_parentheses": "括号不匹配",
+        "error.invalid_paste": "无效粘贴 - 仅接受数字和数学运算",
+        "error.missing_parenthesis": "括号错误：未闭合的括号",
+        "error.empty_parenthesis": "空括号",
+        "memory": {
+            "add": "M+",
+            "subtract": "M-",
+            "recall": "MR",
+            "clear": "MC"
+        }
+    },
+    "settings": {
+        "language": "语言",
+        "theme": {
+            "title": "主题",
+            "light": "浅色",
+            "dark": "深色",
+            "system": "系统"
+        }
+    },
+    "history": {
+        "title": "历史",
+        "clear": "清除历史",
+        "empty": "历史为空"
+    },
+    "feedback": {
+        "title": "反馈",
+        "type": "类型",
+        "type.bug": "错误报告",
+        "type.feature": "功能请求",
+        "type.other": "其他",
+        "message": "消息",
+        "email": "电子邮件（可选）",
+        "submit": "提交",
+        "success": "感谢您的反馈！",
+        "error": {
+            "message_required": "请输入消息",
+            "invalid_email": "无效的电子邮件地址"
+        }
+    },
+    "common": {
+        "cancel": "取消",
+        "copy": "复制",
+        "paste": "粘贴"
+    },
+    "theme": {
+        "light": "浅色主题",
+        "dark": "深色主题"
+    }
+}
