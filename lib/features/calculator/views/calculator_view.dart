@@ -20,18 +20,41 @@ class _CalculatorViewState extends State<CalculatorView> {
   String _expression = '';
   bool _shouldResetDisplay = false;
 
+  bool _isOperatorOrParen(String value) =>
+      value == '+' || value == '-' || value == '*' || value == '/' ||
+      value == '(' || value == ')';
+  bool _isNumberOrDot(String value) =>
+      RegExp(r'^[0-9.]$').hasMatch(value);
+
   void _onButtonPressed(String value) {
     setState(() {
-      if (_shouldResetDisplay) {
-        _display = '0';
-        _expression = '';
-        _shouldResetDisplay = false;
-      }
-
       if (value == 'C') {
         _display = '0';
         _expression = '';
-      } else if (value == '=') {
+        _shouldResetDisplay = false;
+        return;
+      }
+      if (_shouldResetDisplay) {
+        // = sonrası: C/⌫ dışında sonuç üzerinden devam
+        if (value == '⌫') {
+          _display = '0';
+          _expression = '';
+          _shouldResetDisplay = false;
+        } else if (_isOperatorOrParen(value)) {
+          // Operatör veya parantez: sonuca ekle (örn: 8 + 5 = 13, sonra + → 13+)
+          _expression += value;
+          _display = _formatExpression(_expression);
+          _shouldResetDisplay = false;
+        } else if (_isNumberOrDot(value)) {
+          // Rakam veya nokta: yeni sayı ile başla
+          _expression = value;
+          _display = _formatExpression(_expression);
+          _shouldResetDisplay = false;
+        }
+        return;
+      }
+
+      if (value == '=') {
         try {
           double result = _evaluateExpression(_expression);
           String resultStr = _formatResultForExpression(result);
@@ -498,36 +521,71 @@ class _CalculatorViewState extends State<CalculatorView> {
     );
   }
 
+  bool _isNumberButton(String text) {
+    return RegExp(r'^[0-9.]$').hasMatch(text);
+  }
+
   Widget _buildButton(
     String text, {
     bool isOperator = false,
     bool isEquals = false,
   }) {
+    final isNumber = _isNumberButton(text);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.all(4),
         child: Material(
           color: isEquals
-              ? Theme.of(context).colorScheme.primary
+              ? colorScheme.primary
               : isOperator
-                  ? Theme.of(context).colorScheme.secondaryContainer
-                  : Theme.of(context).colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(16),
+                  ? colorScheme.secondaryContainer
+                  : isNumber
+                      ? (isDark
+                          ? colorScheme.surfaceContainerHigh
+                          : colorScheme.surface)
+                      : colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(20),
+          elevation: isNumber ? 2 : 0,
+          shadowColor: isNumber
+              ? (isDark ? Colors.black54 : Colors.black.withOpacity(0.08))
+              : Colors.transparent,
           child: InkWell(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(20),
             onTap: () => _onButtonPressed(text),
+            splashColor: isNumber
+                ? colorScheme.primary.withOpacity(0.12)
+                : null,
+            highlightColor: isNumber
+                ? colorScheme.primary.withOpacity(0.06)
+                : null,
             child: Container(
               alignment: Alignment.center,
+              decoration: isNumber
+                  ? BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: isDark
+                            ? colorScheme.outline.withOpacity(0.2)
+                            : colorScheme.outline.withOpacity(0.08),
+                        width: 1,
+                      ),
+                    )
+                  : null,
               child: Text(
                 text,
                 style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w500,
+                  fontSize: isNumber ? 26 : 28,
+                  fontWeight: isNumber ? FontWeight.w600 : FontWeight.w500,
+                  letterSpacing: isNumber ? 0.5 : 0,
                   color: isEquals
-                      ? Theme.of(context).colorScheme.onPrimary
+                      ? colorScheme.onPrimary
                       : isOperator
-                          ? Theme.of(context).colorScheme.onSecondaryContainer
-                          : Theme.of(context).colorScheme.onSurface,
+                          ? colorScheme.onSecondaryContainer
+                          : colorScheme.onSurface,
                 ),
               ),
             ),
