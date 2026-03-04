@@ -7,6 +7,10 @@ import '../models/calculation_history.dart';
 import 'history_view.dart';
 import '../../feedback/services/feedback_service.dart';
 import '../../feedback/views/feedback_dialog.dart';
+import '../../support/views/support_dialog.dart';
+import '../../support/services/ad_service.dart';
+import '../../support/services/support_state_service.dart';
+import '../../../core/di/locator.dart';
 
 class CalculatorView extends StatefulWidget {
   const CalculatorView({super.key});
@@ -19,6 +23,7 @@ class _CalculatorViewState extends State<CalculatorView> {
   String _display = '0';
   String _expression = '';
   bool _shouldResetDisplay = false;
+  bool _isSupportDialogOpen = false;
 
   bool _isOperatorOrParen(String value) =>
       value == '+' || value == '-' || value == '*' || value == '/' ||
@@ -382,6 +387,31 @@ class _CalculatorViewState extends State<CalculatorView> {
                 builder: (context) => FeedbackDialog(
                   feedbackService: context.read<FeedbackService>(),
                 ),
+              );
+            },
+          ),
+          Builder(
+            builder: (context) {
+              final hasSupported = context.read<SupportStateService>().hasSupported;
+              return IconButton(
+                icon: Icon(
+                  Icons.favorite,
+                  color: (_isSupportDialogOpen || hasSupported)
+                      ? Colors.red
+                      : Colors.black,
+                ),
+                tooltip: 'app.support'.tr(),
+                onPressed: () async {
+                  setState(() => _isSupportDialogOpen = true);
+                  await showDialog(
+                    context: context,
+                    builder: (context) => SupportDialog(
+                      adService: getIt.get<AdService>(),
+                      onSupportSuccess: () => setState(() {}),
+                    ),
+                  );
+                  if (mounted) setState(() => _isSupportDialogOpen = false);
+                },
               );
             },
           ),

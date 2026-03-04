@@ -2,7 +2,8 @@
     "app": {
         "title": "Calculadora",
         "settings": "Configuración",
-        "history": "Historial"
+        "history": "Historial",
+        "support": "Soporte"
     },
     "calculator": {
         "clear": "C",
@@ -56,5 +57,23 @@
     "theme": {
         "light": "Tema Claro",
         "dark": "Tema Oscuro"
+    },
+    "support": {
+        "info": "Para soporte y asistencia, utilice la opción de Comentarios.",
+        "choose_option": "¿Cómo te gustaría apoyar?",
+        "purchase": "Comprar",
+        "watch_ad": "Apoyar viendo un anuncio",
+        "thank_you": "¡Gracias por tu apoyo!",
+        "ad_error": "No se pudo cargar el anuncio. Inténtalo más tarde.",
+        "akidesoft_apps": "Aplicaciones AkideSoft",
+        "app_stories": "Historias y Cuentos",
+        "other_apps": "Otras aplicaciones",
+        "app_finkasa": "Finkasa",
+        "app_bmi": "Calculadora IMC",
+        "support_section": "Apoyar",
+        "watch_ad_support": "Apoyar viendo un anuncio",
+        "buy_coffee": "Invítame un café",
+        "support_project": "Apoyar el proyecto",
+        "already_supported": "Ya apoyaste el proyecto. ¡Gracias!"
     }
 }

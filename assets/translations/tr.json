@@ -2,7 +2,8 @@
     "app": {
         "title": "Hesap Makinesi",
         "settings": "Ayarlar",
-        "history": "Geçmiş"
+        "history": "Geçmiş",
+        "support": "Destek"
     },
     "calculator": {
         "clear": "C",
@@ -52,5 +53,24 @@
         "cancel": "İptal",
         "copy": "Kopyala",
         "paste": "Yapıştır"
+    },
+    "support": {
+        "info": "Destek ve yardım için lütfen Geri Bildirim seçeneğini kullanın.",
+        "choose_option": "Nasıl destek olmak istersiniz?",
+        "purchase": "Satın Al",
+        "watch_ad": "Reklam izleyerek destek ol",
+        "thank_you": "Desteğiniz için teşekkürler!",
+        "ad_error": "Reklam yüklenemedi. Lütfen daha sonra tekrar deneyin.",
+        "akidesoft_apps": "AkideSoft Uygulamaları",
+        "app_stories": "Hikayeler ve Masallar",
+        "other_apps": "Diğer uygulamalar",
+        "app_finkasa": "Finkasa",
+        "app_bmi": "VKİ Ölçer",
+        "support_section": "Destek ol",
+        "watch_ad_support": "Reklam izleyerek destek ol",
+        "buy_coffee": "Kahve ısmarla",
+        "support_project": "Projeyi Destekle",
+        "already_supported": "Projeyi zaten desteklediniz. Teşekkürler!",
+        "purchase_connection_error": "Ödeme servisine bağlanılamadı. Lütfen fiziksel cihazda ve Google Play ile test edin."
     }
 }

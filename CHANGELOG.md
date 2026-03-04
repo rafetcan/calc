@@ -7,11 +7,42 @@ ve bu proje [Semantic Versioning](https://semver.org/lang/tr/) kullanmaktadır.
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-02-27
+
+### Added
+- **Destek Sistemi**
+  - AppBar'a kalp ikonu ile destek butonu eklendi
+  - AkideSoft Uygulamaları dialog'u (Hikayeler ve Masallar, Diğer uygulamalar)
+  - Reklam izleyerek destek ol (ödüllü reklam - AdMob)
+  - Projeyi Destekle (tek seferlik Google Play in-app purchase)
+  - Destek sonrası kalbin kalıcı kırmızı görünmesi
+- **Reklam Entegrasyonu**
+  - Google Mobile Ads SDK entegrasyonu
+  - Ödüllü reklam (support_rewarded)
+- **Ödeme Sistemi**
+  - in_app_purchase ile tek seferlik satın alma (support_project)
+  - Android BILLING izni eklendi
+- **= Sonrası İşlem Devamı**
+  - Sonuç üzerinden işlem yapılabilmesi (C veya ⌫ basılmadığı sürece)
+  - Operatör/parantez: sonuca eklenir
+  - Rakam: yeni hesaplama başlar
+- **Sayı butonları görsel iyileştirmesi**
+  - Gölge (elevation)
+  - Yuvarlatılmış köşe (20px)
+  - İnce border
+  - Splash ve highlight efektleri
+
 ### Changed
+- Kalp butonu: varsayılan siyah, tıklayınca/destek sonrası kırmızı
+- Uygulama linkleri AkideSoft Play Store geliştirici sayfasına yönlendiriliyor
 - Proje yapısı Clean Architecture prensiplerine göre yeniden düzenlendi
 - MVVM pattern implementasyonu iyileştirildi
 - Dependency Injection yapısı GetIt ile güncellendi
 - Localization dosyaları JSON formatına geçirildi
+
+### Fixed
+- IAP channel-error PlatformException için hata yakalama eklendi
+- Android Gradle Plugin 8.9.1 ve Gradle 8.11.1 güncellemesi (build uyumluluğu)
 
 ### Removed
 - Eski model dosyaları (`calculator_model.dart`, `feedback_model.dart`)

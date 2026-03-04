@@ -2,7 +2,8 @@
     "app": {
         "title": "Calculator",
         "settings": "Settings",
-        "history": "History"
+        "history": "History",
+        "support": "Support"
     },
     "calculator": {
         "clear": "C",
@@ -56,5 +57,23 @@
     "theme": {
         "light": "Light Theme",
         "dark": "Dark Theme"
+    },
+    "support": {
+        "info": "For support and assistance, please use the Feedback option.",
+        "choose_option": "Choose how you would like to support:",
+        "purchase": "Purchase",
+        "watch_ad": "Support by watching an ad",
+        "thank_you": "Thank you for your support!",
+        "ad_error": "Ad could not be loaded. Please try again later.",
+        "akidesoft_apps": "AkideSoft Apps",
+        "app_stories": "Stories and Tales",
+        "other_apps": "Other apps",
+        "app_finkasa": "Finkasa",
+        "app_bmi": "BMI Calculator",
+        "support_section": "Support",
+        "watch_ad_support": "Support by watching an ad",
+        "buy_coffee": "Buy me a coffee",
+        "support_project": "Support the Project",
+        "already_supported": "You have already supported the project. Thank you!"
     }
 }

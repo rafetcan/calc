@@ -15,9 +15,16 @@ import 'features/feedback/services/feedback_service.dart';
 import 'features/feedback/views/feedback_dialog.dart';
 import 'core/di/locator.dart';
 import 'firebase_options.dart';
+import 'features/support/services/support_state_service.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await MobileAds.instance.initialize();
+  } catch (_) {
+    // Ads not supported on this platform (e.g. web)
+  }
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -27,6 +34,7 @@ void main() async {
 
   final prefs = await SharedPreferences.getInstance();
   final historyService = HistoryService(prefs);
+  final supportStateService = SupportStateService(prefs);
 
   runApp(
     EasyLocalization(
@@ -49,6 +57,9 @@ void main() async {
           ),
           ChangeNotifierProvider<ThemeService>(
             create: (_) => ThemeService(prefs),
+          ),
+          Provider<SupportStateService>.value(
+            value: supportStateService,
           ),
           ChangeNotifierProvider<CalculatorViewModel>(
             create: (context) => CalculatorViewModel(

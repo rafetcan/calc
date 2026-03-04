@@ -2,7 +2,8 @@
     "app": {
         "title": "कैलकुलेटर",
         "settings": "सेटिंग्स",
-        "history": "इतिहास"
+        "history": "इतिहास",
+        "support": "सहायता"
     },
     "calculator": {
         "clear": "C",
@@ -56,5 +57,23 @@
     "theme": {
         "light": "हल्का थीम",
         "dark": "गहरा थीम"
+    },
+    "support": {
+        "info": "सहायता के लिए कृपया प्रतिक्रिया विकल्प का उपयोग करें।",
+        "choose_option": "आप कैसे समर्थन करना चाहेंगे?",
+        "purchase": "खरीदें",
+        "watch_ad": "विज्ञापन देखकर समर्थन करें",
+        "thank_you": "आपके समर्थन के लिए धन्यवाद!",
+        "ad_error": "विज्ञापन लोड नहीं हो सका। बाद में पुनः प्रयास करें।",
+        "akidesoft_apps": "AkideSoft ऐप्स",
+        "app_stories": "कहानियाँ और परियों की कहानियाँ",
+        "other_apps": "अन्य ऐप्स",
+        "app_finkasa": "Finkasa",
+        "app_bmi": "BMI कैलकुलेटर",
+        "support_section": "समर्थन",
+        "watch_ad_support": "विज्ञापन देखकर समर्थन करें",
+        "buy_coffee": "मुझे कॉफी खरीदें",
+        "support_project": "परियोजना का समर्थन करें",
+        "already_supported": "आपने पहले ही परियोजना का समर्थन किया है। धन्यवाद!"
     }
 }
