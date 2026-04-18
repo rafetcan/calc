@@ -36,10 +36,15 @@
     },
     "feedback": {
         "title": "Feedback",
-        "type": "Type",
-        "type.bug": "Bug Report",
-        "type.feature": "Feature Request",
-        "type.other": "Other",
+        "rate_prompt": "How would you rate the app?",
+        "rate_thanks": "Thank you! We're glad you enjoy the app.",
+        "tell_us_more": "What can we improve? Share your thoughts.",
+        "type": {
+            "label": "Type",
+            "bug": "Bug Report",
+            "feature": "Feature Request",
+            "other": "Other"
+        },
         "message": "Message",
         "email": "Email (optional)",
         "submit": "Submit",

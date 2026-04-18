@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../core/services/theme_service.dart';
@@ -6,6 +8,7 @@ import '../services/history_service.dart';
 import '../models/calculation_history.dart';
 import 'history_view.dart';
 import '../../feedback/services/feedback_service.dart';
+import '../../feedback/services/rating_prompt_service.dart';
 import '../../feedback/views/feedback_dialog.dart';
 import '../../support/views/support_dialog.dart';
 import '../../support/services/ad_service.dart';
@@ -20,7 +23,13 @@ class CalculatorView extends StatefulWidget {
 }
 
 class _CalculatorViewState extends State<CalculatorView> {
-  String _display = '0';
+  /// Overflow menüdeki yıldız (geri bildirim) satırını göstermek için `true` yap.
+  static const bool _showFeedbackMenuItem = false;
+
+  /// Sadece gösterge metnini günceller; tüm `Scaffold`/`AppBar`/tuş ızgarasını
+  /// her basışta yeniden kurmaz — giriş gecikmesini ve kare düşmesini azaltır.
+  final ValueNotifier<String> _displayNotifier = ValueNotifier<String>('0');
+
   String _expression = '';
   bool _shouldResetDisplay = false;
   bool _isSupportDialogOpen = false;
@@ -31,74 +40,125 @@ class _CalculatorViewState extends State<CalculatorView> {
   bool _isNumberOrDot(String value) =>
       RegExp(r'^[0-9.]$').hasMatch(value);
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _maybeShowVersionRatingPrompt();
+    });
+  }
+
+  @override
+  void dispose() {
+    _displayNotifier.dispose();
+    super.dispose();
+  }
+
+  /// Her sürüm için en fazla bir kez; aynı sürümde en az [minLaunchesBeforePrompt]
+  /// açılıştan sonra ve kısa gecikmeyle (hemen açılışta sorma).
+  Future<void> _maybeShowVersionRatingPrompt() async {
+    if (!mounted || kIsWeb) return;
+
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      final version = packageInfo.version;
+      if (!mounted) return;
+
+      final ratingPrompt = context.read<RatingPromptService>();
+      ratingPrompt.recordLaunchForVersion(version);
+      if (!mounted) return;
+
+      if (!ratingPrompt.shouldShowNow(version)) return;
+      if (!mounted) return;
+
+      // Ana ekran bir süre görünsün; soğuk açılışta diyalog absürt olmasın
+      await Future<void>.delayed(const Duration(seconds: 4));
+      if (!mounted) return;
+
+      await showDialog<void>(
+        context: context,
+        builder: (ctx) => FeedbackDialog(
+          feedbackService: ctx.read<FeedbackService>(),
+        ),
+      );
+
+      if (mounted) {
+        await ratingPrompt.markShownForVersion(version);
+      }
+    } catch (_) {
+      // PackageInfo veya dialog hatası — bir sonraki açılışta tekrar dene
+    }
+  }
+
   void _onButtonPressed(String value) {
-    setState(() {
-      if (value == 'C') {
-        _display = '0';
+    if (value == 'C') {
+      _expression = '';
+      _shouldResetDisplay = false;
+      _displayNotifier.value = '0';
+      return;
+    }
+    if (_shouldResetDisplay) {
+      // = sonrası: C/⌫ dışında sonuç üzerinden devam
+      if (value == '⌫') {
         _expression = '';
         _shouldResetDisplay = false;
-        return;
-      }
-      if (_shouldResetDisplay) {
-        // = sonrası: C/⌫ dışında sonuç üzerinden devam
-        if (value == '⌫') {
-          _display = '0';
-          _expression = '';
-          _shouldResetDisplay = false;
-        } else if (_isOperatorOrParen(value)) {
-          // Operatör veya parantez: sonuca ekle (örn: 8 + 5 = 13, sonra + → 13+)
-          _expression += value;
-          _display = _formatExpression(_expression);
-          _shouldResetDisplay = false;
-        } else if (_isNumberOrDot(value)) {
-          // Rakam veya nokta: yeni sayı ile başla
-          _expression = value;
-          _display = _formatExpression(_expression);
-          _shouldResetDisplay = false;
-        }
-        return;
-      }
-
-      if (value == '=') {
-        try {
-          double result = _evaluateExpression(_expression);
-          String resultStr = _formatResultForExpression(result);
-          _display = _formatNumber(result);
-
-          // Geçmişe kaydet
-          final historyService = context.read<HistoryService>();
-          historyService.addToHistory(
-            CalculationHistory(
-              expression: _expression,
-              result: resultStr,
-              timestamp: DateTime.now(),
-            ),
-          );
-
-          // Sonucu expression'a kaydet (binlik ayracı olmadan)
-          _expression = resultStr;
-          _shouldResetDisplay = true;
-        } catch (e) {
-          _display = 'calculator.error'.tr();
-          _expression = '';
-          _shouldResetDisplay = true;
-        }
-      } else if (value == '⌫') {
-        if (_expression.isNotEmpty) {
-          _expression = _expression.substring(0, _expression.length - 1);
-          if (_expression.isEmpty) {
-            _display = '0';
-          } else {
-            _display = _formatExpression(_expression);
-          }
-        } else {
-          _display = '0';
-        }
-      } else {
+        _displayNotifier.value = '0';
+      } else if (_isOperatorOrParen(value)) {
+        // Operatör veya parantez: sonuca ekle (örn: 8 + 5 = 13, sonra + → 13+)
         _expression += value;
-        _display = _formatExpression(_expression);
+        _shouldResetDisplay = false;
+        _displayNotifier.value = _formatExpression(_expression);
+      } else if (_isNumberOrDot(value)) {
+        // Rakam veya nokta: yeni sayı ile başla
+        _expression = value;
+        _shouldResetDisplay = false;
+        _displayNotifier.value = _formatExpression(_expression);
       }
-    });
+      return;
+    }
+
+    if (value == '=') {
+      final exprBeforeEval = _expression;
+      try {
+        final double result = _evaluateExpression(_expression);
+        final String resultStr = _formatResultForExpression(result);
+        _displayNotifier.value = _formatNumber(result);
+        _expression = resultStr;
+        _shouldResetDisplay = true;
+
+        final historyItem = CalculationHistory(
+          expression: exprBeforeEval,
+          result: resultStr,
+          timestamp: DateTime.now(),
+        );
+        // SharedPreferences I/O ve notifyListeners setState döngüsünde olmasın;
+        // bir sonraki karede çalıştır — ekran güncellemesi önce çizilsin.
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          context.read<HistoryService>().addToHistory(historyItem);
+        });
+      } catch (_) {
+        _expression = '';
+        _shouldResetDisplay = true;
+        _displayNotifier.value = 'calculator.error'.tr();
+      }
+      return;
+    }
+
+    if (value == '⌫') {
+      if (_expression.isNotEmpty) {
+        _expression = _expression.substring(0, _expression.length - 1);
+        _displayNotifier.value = _expression.isEmpty
+            ? '0'
+            : _formatExpression(_expression);
+      } else {
+        _displayNotifier.value = '0';
+      }
+      return;
+    }
+
+    _expression += value;
+    _displayNotifier.value = _formatExpression(_expression);
   }
 
   String _formatExpression(String expr) {
@@ -379,15 +439,23 @@ class _CalculatorViewState extends State<CalculatorView> {
         title: Text('app.title'.tr()),
         actions: [
           IconButton(
-            icon: const Icon(Icons.feedback_outlined),
-            tooltip: 'feedback.title'.tr(),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => FeedbackDialog(
-                  feedbackService: context.read<FeedbackService>(),
+            icon: const Icon(Icons.history),
+            tooltip: 'History'.tr(),
+            onPressed: () async {
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HistoryView(
+                    historyService: context.read<HistoryService>(),
+                  ),
                 ),
               );
+              if (!mounted) return;
+              if (result != null && result is CalculationHistory) {
+                _expression = result.expression;
+                _shouldResetDisplay = false;
+                _displayNotifier.value = _formatExpression(result.expression);
+              }
             },
           ),
           Builder(
@@ -415,41 +483,74 @@ class _CalculatorViewState extends State<CalculatorView> {
               );
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.history),
-            tooltip: 'app.history'.tr(),
-            onPressed: () async {
-              final result = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => HistoryView(
-                    historyService: context.read<HistoryService>(),
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.menu),
+            tooltip: 'app.settings'.tr(),
+            onSelected: (value) {
+              if (value == 'theme') {
+                context.read<ThemeService>().toggleTheme();
+              } else if (value == 'report_error') {
+                showDialog<void>(
+                  context: context,
+                  builder: (context) => FeedbackDialog(
+                    feedbackService: context.read<FeedbackService>(),
+                    directMessageForm: true,
+                    submissionType: 'bug',
                   ),
-                ),
-              );
-
-              // Geçmişten bir öğe seçildiyse yükle
-              if (result != null && result is CalculationHistory) {
-                setState(() {
-                  _expression = result.expression;
-                  _display = _formatExpression(result.expression);
-                  _shouldResetDisplay = false;
-                });
+                );
+              } else if (value == 'feedback') {
+                showDialog(
+                  context: context,
+                  builder: (context) => FeedbackDialog(
+                    feedbackService: context.read<FeedbackService>(),
+                  ),
+                );
               }
             },
-          ),
-          Consumer<ThemeService>(
-            builder: (context, themeService, _) {
-              return IconButton(
-                icon: Icon(
-                  themeService.isDarkMode ? Icons.light_mode : Icons.dark_mode,
+            itemBuilder: (context) => [
+              PopupMenuItem<String>(
+                value: 'theme',
+                child: Consumer<ThemeService>(
+                  builder: (context, themeService, _) => Row(
+                    children: [
+                      Icon(
+                        themeService.isDarkMode
+                            ? Icons.light_mode
+                            : Icons.dark_mode,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(themeService.isDarkMode
+                          ? 'Light Theme'.tr()
+                          : 'Dark Theme'.tr()),
+                    ],
+                  ),
                 ),
-                tooltip: themeService.isDarkMode
-                    ? 'theme.light'.tr()
-                    : 'theme.dark'.tr(),
-                onPressed: themeService.toggleTheme,
-              );
-            },
+              ),
+              PopupMenuItem<String>(
+                value: 'report_error',
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.bug_report_outlined,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                    const SizedBox(width: 12),
+                    Text('feedback.type.bug'.tr()),
+                  ],
+                ),
+              ),
+              if (_showFeedbackMenuItem)
+                PopupMenuItem<String>(
+                  value: 'feedback',
+                  child: Row(
+                    children: [
+                      const Icon(Icons.star_border),
+                      const SizedBox(width: 12),
+                      Text('feedback.title'.tr()),
+                    ],
+                  ),
+                ),
+            ],
           ),
         ],
       ),
@@ -467,18 +568,23 @@ class _CalculatorViewState extends State<CalculatorView> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      reverse: true,
-                      child: Text(
-                        _display,
-                        style: TextStyle(
-                          fontSize: 48,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                        textAlign: TextAlign.end,
-                      ),
+                    ValueListenableBuilder<String>(
+                      valueListenable: _displayNotifier,
+                      builder: (context, display, _) {
+                        return SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          reverse: true,
+                          child: Text(
+                            display,
+                            style: TextStyle(
+                              fontSize: 48,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                            textAlign: TextAlign.end,
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -592,30 +698,32 @@ class _CalculatorViewState extends State<CalculatorView> {
             highlightColor: isNumber
                 ? colorScheme.primary.withOpacity(0.06)
                 : null,
-            child: Container(
-              alignment: Alignment.center,
-              decoration: isNumber
-                  ? BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: isDark
-                            ? colorScheme.outline.withOpacity(0.2)
-                            : colorScheme.outline.withOpacity(0.08),
-                        width: 1,
-                      ),
-                    )
-                  : null,
-              child: Text(
-                text,
-                style: TextStyle(
-                  fontSize: isNumber ? 26 : 28,
-                  fontWeight: isNumber ? FontWeight.w600 : FontWeight.w500,
-                  letterSpacing: isNumber ? 0.5 : 0,
-                  color: isEquals
-                      ? colorScheme.onPrimary
-                      : isOperator
-                          ? colorScheme.onSecondaryContainer
-                          : colorScheme.onSurface,
+            child: SizedBox.expand(
+              child: Container(
+                alignment: Alignment.center,
+                decoration: isNumber
+                    ? BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: isDark
+                              ? colorScheme.outline.withOpacity(0.2)
+                              : colorScheme.outline.withOpacity(0.08),
+                          width: 1,
+                        ),
+                      )
+                    : null,
+                child: Text(
+                  text,
+                  style: TextStyle(
+                    fontSize: isNumber ? 26 : 28,
+                    fontWeight: isNumber ? FontWeight.w600 : FontWeight.w500,
+                    letterSpacing: isNumber ? 0.5 : 0,
+                    color: isEquals
+                        ? colorScheme.onPrimary
+                        : isOperator
+                            ? colorScheme.onSecondaryContainer
+                            : colorScheme.onSurface,
+                  ),
                 ),
               ),
             ),

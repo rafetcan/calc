@@ -1,3 +1,6 @@
+import com.android.build.gradle.LibraryExtension
+import org.gradle.api.JavaVersion
+
 allprojects {
     repositories {
         google()
@@ -14,6 +17,19 @@ subprojects {
 }
 subprojects {
     project.evaluationDependsOn(":app")
+}
+
+// Eklenti modüllerinin (google_mobile_ads vb.) Java 8 uyarılarını kaldırmak için.
+// `:app` kendi build.gradle.kts içinde zaten 17; burada yalnızca library eklentileri.
+subprojects {
+    plugins.withId("com.android.library") {
+        extensions.configure<LibraryExtension>("android") {
+            compileOptions {
+                sourceCompatibility = JavaVersion.VERSION_17
+                targetCompatibility = JavaVersion.VERSION_17
+            }
+        }
+    }
 }
 
 tasks.register<Delete>("clean") {

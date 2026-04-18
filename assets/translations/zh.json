@@ -36,10 +36,15 @@
     },
     "feedback": {
         "title": "反馈",
-        "type": "类型",
-        "type.bug": "错误报告",
-        "type.feature": "功能请求",
-        "type.other": "其他",
+        "rate_prompt": "您如何评价此应用？",
+        "rate_thanks": "谢谢！我们很高兴您喜欢这个应用。",
+        "tell_us_more": "我们可以如何改进？请分享您的想法。",
+        "type": {
+            "label": "类型",
+            "bug": "错误报告",
+            "feature": "功能请求",
+            "other": "其他"
+        },
         "message": "消息",
         "email": "电子邮件（可选）",
         "submit": "提交",

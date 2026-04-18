@@ -36,10 +36,15 @@
     },
     "feedback": {
         "title": "Geri Bildirim",
-        "type": "Tür",
-        "type.bug": "Hata Bildirimi",
-        "type.feature": "Özellik İsteği",
-        "type.other": "Diğer",
+        "rate_prompt": "Uygulamayı nasıl değerlendirirsiniz?",
+        "rate_thanks": "Teşekkürler! Değerlendirmeniz için çok mutluyuz.",
+        "tell_us_more": "Neyi iyileştirebiliriz? Görüşlerinizi paylaşın.",
+        "type": {
+            "label": "Tür",
+            "bug": "Hata Bildirimi",
+            "feature": "Özellik İsteği",
+            "other": "Diğer"
+        },
         "message": "Mesaj",
         "email": "E-posta (isteğe bağlı)",
         "submit": "Gönder",

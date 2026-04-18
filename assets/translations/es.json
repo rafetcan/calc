@@ -36,10 +36,15 @@
     },
     "feedback": {
         "title": "Comentarios",
-        "type": "Tipo",
-        "type.bug": "Informe de Error",
-        "type.feature": "Solicitud de Función",
-        "type.other": "Otro",
+        "rate_prompt": "¿Cómo calificarías la aplicación?",
+        "rate_thanks": "¡Gracias! Nos alegra que disfrutes la aplicación.",
+        "tell_us_more": "¿Qué podemos mejorar? Comparte tus ideas.",
+        "type": {
+            "label": "Tipo",
+            "bug": "Informe de Error",
+            "feature": "Solicitud de Función",
+            "other": "Otro"
+        },
         "message": "Mensaje",
         "email": "Correo electrónico (opcional)",
         "submit": "Enviar",

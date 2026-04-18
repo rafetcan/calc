@@ -7,6 +7,43 @@ ve bu proje [Semantic Versioning](https://semver.org/lang/tr/) kullanmaktadır.
 
 ## [Unreleased]
 
+### Added
+- **Ayarlar menüsü:** Tema satırının altında **hata bildirimi** (`feedback.type.bug`); tıklanınca yıldız ekranı atlanır, doğrudan mesaj formu açılır
+- **`FeedbackDialog`:** `directMessageForm` ve `submissionType` (örn. menüden `bug` ile Firestore’a gönderim)
+
+### Changed
+- **`=` sonrası geçmiş:** `HistoryService.addToHistory` artık `setState` içinde değil; `addPostFrameCallback` ile bir sonraki karede çalışır (ekran önce güncellenir, I/O ana iş parçacığını bloklamaz)
+- **Tuşlar:** `InkWell` altında `SizedBox.expand` ile dokunma alanı tüm hücreyi kaplar (kenar vuruşları)
+
+### Fixed
+- **Çeviriler (`easy_localization`):** `feedback.type` ile `feedback.type.bug` aynı düzende çakışıyordu; menüde yanlışlıkla **"Type"** görünüyordu. `feedback.type` artık nesne: `label`, `bug`, `feature`, `other` (TR, EN, ES, HI, ZH JSON güncellendi)
+
+## [1.1.3] - 2026-02-28
+
+### Added
+- **Geri bildirim / mağaza puanlama akışı**
+  - Önce 5 yıldızlı oylama ekranı; **5 yıldız** → Google Play (`in_app_review`: release’te `requestReview` + yedek `openStoreListing`; **debug**’da doğrudan mağaza listesi)
+  - **4 yıldız ve altı** → yalnızca mesaj formu (e-posta alanı kaldırıldı), Firestore’a gönderim
+  - Paket: `in_app_review`
+- **Otomatik puan / geri bildirim isteği (sürüm bazlı)**
+  - `RatingPromptService` + `SharedPreferences` (`calc_rating_prompt_last_version`, açılış sayacı)
+  - Her `versionName` için **en fazla bir kez**; aynı sürümde **en az 3 uygulama açılışı** sonrası ve diyalogdan önce **4 sn** gecikme (soğuk açılışta hemen sormaz)
+  - Web’de otomatik diyalog yok (`kIsWeb`)
+  - `main.dart` içinde `Provider<RatingPromptService>`
+- **Yıldız arayüzü**
+  - Dokunma/hover sırasında seçilen yıldıza kadar önizleme
+  - Taşma önleme: `FittedBox`, diyalogda `ConstrainedBox`
+- **Çeviriler:** `feedback.rate_prompt`, `feedback.rate_thanks`, `feedback.tell_us_more` (TR, EN, ZH, ES, HI)
+
+### Changed
+- **AppBar:** Geçmiş doğrudan ikon olarak; tema ve (isteğe bağlı) geri bildirim **menü** (`PopupMenuButton`) altında
+- **Menüdeki manuel geri bildirim** satırı geçici olarak gizli (`_showFeedbackMenuItem = false`); `true` yapılarak tekrar açılabilir
+- **Geri bildirim ikonu:** menüde `Icons.star_border` (yıldız teması)
+- **Hesap makinesi gösterge performansı:** `ValueNotifier` ile yalnızca ekran metni güncellenir; tüm `Scaffold`/`AppBar`/tuş ızgarası her tuşta yeniden kurulmaz
+
+### Fixed
+- Play Store / uygulama içi değerlendirme: dialog kapanmadan önce `requestReview` için `await` ve gecikme; `isAvailable` false iken `openStoreListing` yedekleri
+
 ## [1.1.2] - 2026-02-27
 
 ### Added
