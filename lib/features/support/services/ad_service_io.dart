@@ -5,6 +5,8 @@ class AdService {
   RewardedAd? _rewardedAd;
   bool _isAdLoaded = false;
 
+  bool get isReady => _isAdLoaded && _rewardedAd != null;
+
   static String get _rewardedAdUnitId {
     if (Platform.isAndroid) {
       return 'ca-app-pub-4634689499659793/1731776532'; // support_rewarded

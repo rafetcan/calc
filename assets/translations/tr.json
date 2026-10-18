@@ -59,6 +59,10 @@
         "copy": "Kopyala",
         "paste": "Yapıştır"
     },
+    "theme": {
+        "light": "Açık Tema",
+        "dark": "Koyu Tema"
+    },
     "support": {
         "info": "Destek ve yardım için lütfen Geri Bildirim seçeneğini kullanın.",
         "choose_option": "Nasıl destek olmak istersiniz?",

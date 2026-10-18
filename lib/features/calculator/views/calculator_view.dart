@@ -36,13 +36,16 @@ class _CalculatorViewState extends State<CalculatorView> {
 
   bool _isOperatorOrParen(String value) =>
       value == '+' || value == '-' || value == '*' || value == '/' ||
-      value == '(' || value == ')';
+      value == '%' || value == '(' || value == ')';
   bool _isNumberOrDot(String value) =>
       RegExp(r'^[0-9.]$').hasMatch(value);
 
   @override
   void initState() {
     super.initState();
+    if (getIt.isRegistered<AdService>()) {
+      getIt.get<AdService>().loadRewardedAd();
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _maybeShowVersionRatingPrompt();
     });
@@ -88,6 +91,44 @@ class _CalculatorViewState extends State<CalculatorView> {
     } catch (_) {
       // PackageInfo veya dialog hatası — bir sonraki açılışta tekrar dene
     }
+  }
+
+  Future<void> _openSupportDialog() async {
+    setState(() => _isSupportDialogOpen = true);
+    await showDialog(
+      context: context,
+      builder: (context) => SupportDialog(
+        adService: getIt.get<AdService>(),
+        onSupportSuccess: () => setState(() {}),
+      ),
+    );
+    if (mounted) setState(() => _isSupportDialogOpen = false);
+  }
+
+  /// Kalp: ödüllü reklamı doğrudan açar (pencere yok). Reklam hazır değilse
+  /// kısa bir mesaj gösterir ve yeniden yüklemeyi başlatır.
+  Future<void> _onHeartPressed() async {
+    final adService = getIt.get<AdService>();
+
+    if (!adService.isReady) {
+      adService.loadRewardedAd();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('support.ad_error'.tr())),
+      );
+      return;
+    }
+
+    setState(() => _isSupportDialogOpen = true);
+    await adService.showRewardedAd(
+      onRewarded: () {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('support.thank_you'.tr())),
+        );
+      },
+      onError: (_) {},
+    );
+    if (mounted) setState(() => _isSupportDialogOpen = false);
   }
 
   void _onButtonPressed(String value) {
@@ -157,8 +198,30 @@ class _CalculatorViewState extends State<CalculatorView> {
       return;
     }
 
+    if (value == '%' && !_canAppendPercent(_expression)) return;
+
     _expression += value;
     _displayNotifier.value = _formatExpression(_expression);
+  }
+
+  /// `%` yalnızca bir sayı, `)` veya başka bir `%` sonrasına eklenebilir.
+  bool _canAppendPercent(String expr) {
+    if (expr.isEmpty) return false;
+    final last = expr[expr.length - 1];
+    return _isDigit(last) || last == ')' || last == '%';
+  }
+
+  /// Ekranda `*` ve `/` yerine `×` ve `÷` gösterilir; iç ifade değişmez.
+  String _displayChar(String char) {
+    if (char == '*') return '×';
+    if (char == '/') return '÷';
+    return char;
+  }
+
+  /// Kayan nokta artıklarını temizler (14.669999999 -> 14.67).
+  double _roundResult(double value) {
+    if (value.isNaN || value.isInfinite) return value;
+    return double.parse(value.toStringAsFixed(10));
   }
 
   String _formatExpression(String expr) {
@@ -187,7 +250,7 @@ class _CalculatorViewState extends State<CalculatorView> {
           }
           currentNumber = '';
         }
-        formatted += char;
+        formatted += _displayChar(char);
       }
     }
 
@@ -372,7 +435,7 @@ class _CalculatorViewState extends State<CalculatorView> {
         double right = double.parse(tokens[i + 1]);
         double result = tokens[i] == '*' ? left * right : left / right;
 
-        tokens[i - 1] = result.toString();
+        tokens[i - 1] = _roundResult(result).toString();
         tokens.removeAt(i);
         tokens.removeAt(i);
         i -= 2;
@@ -390,7 +453,7 @@ class _CalculatorViewState extends State<CalculatorView> {
       }
     }
 
-    return result;
+    return _roundResult(result);
   }
 
   List<String> _tokenize(String expression) {
@@ -417,6 +480,15 @@ class _CalculatorViewState extends State<CalculatorView> {
         } else {
           tokens.add(char);
         }
+      } else if (char == '%') {
+        // Sonek yüzde: önceki sayıyı 100'e böler (50% -> 0.5)
+        if (currentNumber.isNotEmpty && currentNumber != '-') {
+          final percent = _roundResult(double.parse(currentNumber) / 100);
+          currentNumber = percent
+              .toStringAsFixed(12)
+              .replaceAll(RegExp(r'0+$'), '')
+              .replaceAll(RegExp(r'\.$'), '');
+        }
       } else if (char == 'e' || char == 'E') {
         // Bilimsel gösterim desteği (örn: 1e5)
         if (currentNumber.isNotEmpty) {
@@ -440,7 +512,7 @@ class _CalculatorViewState extends State<CalculatorView> {
         actions: [
           IconButton(
             icon: const Icon(Icons.history),
-            tooltip: 'History'.tr(),
+            tooltip: 'app.history'.tr(),
             onPressed: () async {
               final result = await Navigator.push(
                 context,
@@ -469,17 +541,7 @@ class _CalculatorViewState extends State<CalculatorView> {
                       : Colors.black,
                 ),
                 tooltip: 'app.support'.tr(),
-                onPressed: () async {
-                  setState(() => _isSupportDialogOpen = true);
-                  await showDialog(
-                    context: context,
-                    builder: (context) => SupportDialog(
-                      adService: getIt.get<AdService>(),
-                      onSupportSuccess: () => setState(() {}),
-                    ),
-                  );
-                  if (mounted) setState(() => _isSupportDialogOpen = false);
-                },
+                onPressed: _onHeartPressed,
               );
             },
           ),
@@ -498,6 +560,8 @@ class _CalculatorViewState extends State<CalculatorView> {
                     submissionType: 'bug',
                   ),
                 );
+              } else if (value == 'support') {
+                _openSupportDialog();
               } else if (value == 'feedback') {
                 showDialog(
                   context: context,
@@ -520,8 +584,8 @@ class _CalculatorViewState extends State<CalculatorView> {
                       ),
                       const SizedBox(width: 12),
                       Text(themeService.isDarkMode
-                          ? 'Light Theme'.tr()
-                          : 'Dark Theme'.tr()),
+                          ? 'theme.light'.tr()
+                          : 'theme.dark'.tr()),
                     ],
                   ),
                 ),
@@ -536,6 +600,16 @@ class _CalculatorViewState extends State<CalculatorView> {
                     ),
                     const SizedBox(width: 12),
                     Text('feedback.type.bug'.tr()),
+                  ],
+                ),
+              ),
+              PopupMenuItem<String>(
+                value: 'support',
+                child: Row(
+                  children: [
+                    const Icon(Icons.favorite_border),
+                    const SizedBox(width: 12),
+                    Text('support.akidesoft_apps'.tr()),
                   ],
                 ),
               ),
@@ -603,6 +677,7 @@ class _CalculatorViewState extends State<CalculatorView> {
                           _buildButton('C', isOperator: true),
                           _buildButton('(', isOperator: true),
                           _buildButton(')', isOperator: true),
+                          _buildButton('%', isOperator: true),
                           _buildButton('/', isOperator: true),
                         ],
                       ),
@@ -713,7 +788,7 @@ class _CalculatorViewState extends State<CalculatorView> {
                       )
                     : null,
                 child: Text(
-                  text,
+                  _displayChar(text),
                   style: TextStyle(
                     fontSize: isNumber ? 26 : 28,
                     fontWeight: isNumber ? FontWeight.w600 : FontWeight.w500,

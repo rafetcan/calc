@@ -8,10 +8,15 @@ ve bu proje [Semantic Versioning](https://semver.org/lang/tr/) kullanmaktadır.
 ## [Unreleased]
 
 ### Added
+- **`%` tuşu:** sonek yüzde (`50%` = 0.5, `200×10%` = 20)
 - **Ayarlar menüsü:** Tema satırının altında **hata bildirimi** (`feedback.type.bug`); tıklanınca yıldız ekranı atlanır, doğrudan mesaj formu açılır
 - **`FeedbackDialog`:** `directMessageForm` ve `submissionType` (örn. menüden `bug` ile Firestore’a gönderim)
 
 ### Changed
+- **Kalp butonu:** ödüllü reklamı doğrudan açar (pencere yok); reklam hazır değilse kısa hata mesajı gösterir. Destek penceresi menüden erişilebilir
+- **Tuş etiketleri:** `*` ve `/` yerine `×` ve `÷` gösterilir (ekran ve geçmiş); iç ifade değişmedi
+- **Sonuç yuvarlama:** kayan nokta artıkları 10 haneye yuvarlanır (`6.13+8.54` = 14.67, `6×1.2` = 7.2)
+- **Play Billing:** `in_app_purchase` 3.3.1 (Google Play Billing Library 8.0.0)
 - **`=` sonrası geçmiş:** `HistoryService.addToHistory` artık `setState` içinde değil; `addPostFrameCallback` ile bir sonraki karede çalışır (ekran önce güncellenir, I/O ana iş parçacığını bloklamaz)
 - **Tuşlar:** `InkWell` altında `SizedBox.expand` ile dokunma alanı tüm hücreyi kaplar (kenar vuruşları)
 

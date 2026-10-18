@@ -1,4 +1,6 @@
 class AdService {
+  bool get isReady => false;
+
   Future<void> loadRewardedAd() async {}
 
   Future<bool> showRewardedAd({

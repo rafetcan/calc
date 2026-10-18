@@ -48,7 +48,7 @@ class _HistoryItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(item.expression),
+      title: Text(item.expression.replaceAll('*', '×').replaceAll('/', '÷')),
       subtitle: Text(
         '${item.result} • ${_formatDate(item.timestamp)}',
         style: Theme.of(context).textTheme.bodySmall,
