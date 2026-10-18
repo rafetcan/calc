@@ -7,6 +7,8 @@ ve bu proje [Semantic Versioning](https://semver.org/lang/tr/) kullanmaktadır.
 
 ## [Unreleased]
 
+## [1.1.4] - 2026-10-18
+
 ### Added
 - **`%` tuşu:** sonek yüzde (`50%` = 0.5, `200×10%` = 20)
 - **Ayarlar menüsü:** Tema satırının altında **hata bildirimi** (`feedback.type.bug`); tıklanınca yıldız ekranı atlanır, doğrudan mesaj formu açılır
