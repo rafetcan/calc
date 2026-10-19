@@ -100,4 +100,55 @@ void main() {
     expect(find.text('0'), findsWidgets);
     expect(find.text('%'), findsOneWidget);
   });
+
+  group('girilen sayı ekranda olduğu gibi çizilir', () {
+    testWidgets('"5." sonundaki nokta görünür', (tester) async {
+      await _pump(tester);
+      await _type(tester, '5.');
+      expect(find.text('5.'), findsOneWidget);
+    });
+
+    testWidgets('"5.0" sondaki sıfır görünür', (tester) async {
+      await _pump(tester);
+      await _type(tester, '5.0');
+      expect(find.text('5.0'), findsOneWidget);
+    });
+
+    testWidgets('"0.05" doğru çizilir', (tester) async {
+      await _pump(tester);
+      await _type(tester, '0.05');
+      expect(find.text('0.05'), findsOneWidget);
+    });
+
+    testWidgets('"1234.50" binlik ayraç ve sıfır korunur', (tester) async {
+      await _pump(tester);
+      await _type(tester, '1234.50');
+      expect(find.text('1.234.50'), findsOneWidget);
+    });
+
+    testWidgets('aynı sayıda ikinci nokta yok sayılır', (tester) async {
+      await _pump(tester);
+      await _type(tester, '1.2.3');
+      expect(find.text('1.23'), findsOneWidget);
+    });
+
+    testWidgets('"." ile başlayınca 0. olur', (tester) async {
+      await _pump(tester);
+      await _type(tester, '.5');
+      expect(find.text('0.5'), findsOneWidget);
+    });
+
+    testWidgets('baştaki sıfırlar yığılmaz', (tester) async {
+      await _pump(tester);
+      await _type(tester, '007');
+      expect(find.text('7'), findsWidgets);
+      expect(find.text('007'), findsNothing);
+    });
+
+    testWidgets('19 haneli sayı bozulmadan çizilir', (tester) async {
+      await _pump(tester);
+      await _type(tester, '1234567890123456789');
+      expect(find.text('1.234.567.890.123.456.789'), findsOneWidget);
+    });
+  });
 }

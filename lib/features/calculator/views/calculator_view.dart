@@ -151,7 +151,7 @@ class _CalculatorViewState extends State<CalculatorView> {
         _displayNotifier.value = _formatExpression(_expression);
       } else if (_isNumberOrDot(value)) {
         // Rakam veya nokta: yeni sayı ile başla
-        _expression = value;
+        _expression = value == '.' ? '0.' : value;
         _shouldResetDisplay = false;
         _displayNotifier.value = _formatExpression(_expression);
       }
@@ -200,6 +200,22 @@ class _CalculatorViewState extends State<CalculatorView> {
 
     if (value == '%' && !_canAppendPercent(_expression)) return;
 
+    if (value == '.') {
+      final segment = _currentNumberSegment(_expression);
+      if (segment.contains('.')) return; // aynı sayıda ikinci nokta olmaz
+      if (segment.isEmpty) {
+        _expression += '0.';
+        _displayNotifier.value = _formatExpression(_expression);
+        return;
+      }
+    } else if (_isDigit(value) &&
+        _currentNumberSegment(_expression) == '0') {
+      // Baştaki sıfır yığılmasın: "0" + "7" -> "7"
+      _expression = _expression.substring(0, _expression.length - 1) + value;
+      _displayNotifier.value = _formatExpression(_expression);
+      return;
+    }
+
     _expression += value;
     _displayNotifier.value = _formatExpression(_expression);
   }
@@ -242,12 +258,7 @@ class _CalculatorViewState extends State<CalculatorView> {
         currentNumber += char;
       } else {
         if (currentNumber.isNotEmpty) {
-          try {
-            double num = double.parse(currentNumber);
-            formatted += _formatNumber(num);
-          } catch (e) {
-            formatted += currentNumber;
-          }
+          formatted += _formatNumberString(currentNumber);
           currentNumber = '';
         }
         formatted += _displayChar(char);
@@ -255,15 +266,31 @@ class _CalculatorViewState extends State<CalculatorView> {
     }
 
     if (currentNumber.isNotEmpty) {
-      try {
-        double num = double.parse(currentNumber);
-        formatted += _formatNumber(num);
-      } catch (e) {
-        formatted += currentNumber;
-      }
+      formatted += _formatNumberString(currentNumber);
     }
 
     return formatted.isEmpty ? '0' : formatted;
+  }
+
+  /// Kullanıcının yazdığı sayıyı olduğu gibi biçimlendirir: yalnızca tamsayı
+  /// kısmına binlik ayracı eklenir. `double`'a çevrilmez; böylece "5.",
+  /// "5.0" ve çok haneli sayılar yazılırken kaybolmaz veya bozulmaz.
+  String _formatNumberString(String number) {
+    final isNegative = number.startsWith('-');
+    final body = isNegative ? number.substring(1) : number;
+    if (!RegExp(r'^[0-9]*\.?[0-9]*$').hasMatch(body)) return number;
+
+    final dot = body.indexOf('.');
+    final intPart = dot == -1 ? body : body.substring(0, dot);
+    final fracPart = dot == -1 ? '' : body.substring(dot); // '.' dahil
+    final intFormatted = intPart.isEmpty ? '' : _addThousandSeparator(intPart);
+    return '${isNegative ? '-' : ''}$intFormatted$fracPart';
+  }
+
+  /// Girişte biten sayı parçası (son rakam/nokta dizisi).
+  String _currentNumberSegment(String expr) {
+    final match = RegExp(r'[0-9.]*$').firstMatch(expr);
+    return match?.group(0) ?? '';
   }
 
   String _formatNumber(double number) {

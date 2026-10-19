@@ -7,6 +7,14 @@ ve bu proje [Semantic Versioning](https://semver.org/lang/tr/) kullanmaktadır.
 
 ## [Unreleased]
 
+## [1.1.5] - 2026-10-19
+
+### Fixed
+- **Ekranda çizilmeyen tuşlar:** yazılan sayı `double`'a çevrilip biçimlendirildiği için `5.` (sondaki nokta), `5.0` (sondaki sıfır) ve çok haneli sayılar yazılırken ekranda görünmüyordu; sayı artık yazıldığı gibi gösteriliyor, yalnızca binlik ayracı ekleniyor
+- **Nokta:** aynı sayıda ikinci nokta yok sayılır; sayı `.` ile başlarsa `0.` olur
+- **Baştaki sıfır:** `0` sonrası rakam yazınca sıfır yığılmaz (`007` → `7`)
+
+
 ## [1.1.4] - 2026-10-18
 
 ### Added
