@@ -15,6 +15,14 @@ class FeedbackService {
   })  : _firestore = firestore ?? FirebaseFirestore.instance,
         _deviceInfo = deviceInfo ?? DeviceInfoPlugin();
 
+  /// Formdaki türü Firestore güvenlik kurallarının kabul ettiği değere çevirir.
+  ///
+  /// `calculator_feedback` kuralı `type` için yalnızca `bug` ve `suggestion`
+  /// kabul eder (bkz. firestore.rules); başka değer PERMISSION_DENIED verir.
+  /// Bu yüzden hata dışındaki her şey (özellik isteği, diğer) `suggestion` olur.
+  static String firestoreType(String formType) =>
+      formType == 'bug' ? 'bug' : 'suggestion';
+
   Future<bool> canSubmitFeedback() async {
     if (_lastFeedbackTime == null) return true;
     final difference = DateTime.now().difference(_lastFeedbackTime!);
@@ -51,7 +59,7 @@ class FeedbackService {
 
     final feedback = FeedbackModel(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
-      type: type,
+      type: firestoreType(type),
       message: message,
       email: email,
       deviceInfo: deviceInfo,

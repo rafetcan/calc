@@ -7,6 +7,11 @@ ve bu proje [Semantic Versioning](https://semver.org/lang/tr/) kullanmaktadır.
 
 ## [Unreleased]
 
+## [1.1.7] - 2026-10-24
+
+### Fixed
+- **Geri bildirim `permission-denied`:** Firestore kuralı `calculator_feedback.type` için yalnızca `bug` ve `suggestion` kabul eder; yeni form `feature`/`other` gönderiyordu. Hata dışındaki türler artık `suggestion` olarak kaydedilir
+
 ## [1.1.6] - 2026-10-24
 
 ### Changed
