@@ -7,6 +7,16 @@ ve bu proje [Semantic Versioning](https://semver.org/lang/tr/) kullanmaktadır.
 
 ## [Unreleased]
 
+## [1.1.6] - 2026-10-24
+
+### Changed
+- **Geri bildirim formu:** yıldız ekranı ve puana göre yönlendirme kaldırıldı. Menüdeki "Geri Bildirim" satırı herkese tür (hata/özellik/diğer) + mesaj formu açar; formun altında herkese görünen, kullanıcının kendi isteğiyle açtığı "Google Play'de puan ver" bağlantısı vardır. Firestore gönderimi aynı
+
+### Removed
+- **Otomatik "puan ver" istemi:** uygulama artık kendiliğinden puan/geri bildirim penceresi göstermez (`RatingPromptService` ve açılış sayacı kaldırıldı)
+- Kullanılmayan yıldız arayüzü ve `feedback.rate_prompt`, `feedback.rate_thanks`, `feedback.tell_us_more` çevirileri (TR/EN/ZH/ES/HI)
+- Menüdeki ayrı "Hata Bildirimi" satırı (form artık tür seçtiriyor)
+
 ## [1.1.5] - 2026-10-19
 
 ### Fixed

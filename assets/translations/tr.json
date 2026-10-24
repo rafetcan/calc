@@ -36,9 +36,7 @@
     },
     "feedback": {
         "title": "Geri Bildirim",
-        "rate_prompt": "Uygulamayı nasıl değerlendirirsiniz?",
-        "rate_thanks": "Teşekkürler! Değerlendirmeniz için çok mutluyuz.",
-        "tell_us_more": "Neyi iyileştirebiliriz? Görüşlerinizi paylaşın.",
+        "rate_on_play": "Google Play'de puan ver",
         "type": {
             "label": "Tür",
             "bug": "Hata Bildirimi",

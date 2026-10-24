@@ -36,9 +36,7 @@
     },
     "feedback": {
         "title": "反馈",
-        "rate_prompt": "您如何评价此应用？",
-        "rate_thanks": "谢谢！我们很高兴您喜欢这个应用。",
-        "tell_us_more": "我们可以如何改进？请分享您的想法。",
+        "rate_on_play": "在 Google Play 上评分",
         "type": {
             "label": "类型",
             "bug": "错误报告",

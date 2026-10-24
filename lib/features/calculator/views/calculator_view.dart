@@ -1,6 +1,4 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../core/services/theme_service.dart';
@@ -8,7 +6,6 @@ import '../services/history_service.dart';
 import '../models/calculation_history.dart';
 import 'history_view.dart';
 import '../../feedback/services/feedback_service.dart';
-import '../../feedback/services/rating_prompt_service.dart';
 import '../../feedback/views/feedback_dialog.dart';
 import '../../support/views/support_dialog.dart';
 import '../../support/services/ad_service.dart';
@@ -23,9 +20,6 @@ class CalculatorView extends StatefulWidget {
 }
 
 class _CalculatorViewState extends State<CalculatorView> {
-  /// Overflow menüdeki yıldız (geri bildirim) satırını göstermek için `true` yap.
-  static const bool _showFeedbackMenuItem = false;
-
   /// Sadece gösterge metnini günceller; tüm `Scaffold`/`AppBar`/tuş ızgarasını
   /// her basışta yeniden kurmaz — giriş gecikmesini ve kare düşmesini azaltır.
   final ValueNotifier<String> _displayNotifier = ValueNotifier<String>('0');
@@ -46,51 +40,12 @@ class _CalculatorViewState extends State<CalculatorView> {
     if (getIt.isRegistered<AdService>()) {
       getIt.get<AdService>().loadRewardedAd();
     }
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _maybeShowVersionRatingPrompt();
-    });
   }
 
   @override
   void dispose() {
     _displayNotifier.dispose();
     super.dispose();
-  }
-
-  /// Her sürüm için en fazla bir kez; aynı sürümde en az [minLaunchesBeforePrompt]
-  /// açılıştan sonra ve kısa gecikmeyle (hemen açılışta sorma).
-  Future<void> _maybeShowVersionRatingPrompt() async {
-    if (!mounted || kIsWeb) return;
-
-    try {
-      final packageInfo = await PackageInfo.fromPlatform();
-      final version = packageInfo.version;
-      if (!mounted) return;
-
-      final ratingPrompt = context.read<RatingPromptService>();
-      ratingPrompt.recordLaunchForVersion(version);
-      if (!mounted) return;
-
-      if (!ratingPrompt.shouldShowNow(version)) return;
-      if (!mounted) return;
-
-      // Ana ekran bir süre görünsün; soğuk açılışta diyalog absürt olmasın
-      await Future<void>.delayed(const Duration(seconds: 4));
-      if (!mounted) return;
-
-      await showDialog<void>(
-        context: context,
-        builder: (ctx) => FeedbackDialog(
-          feedbackService: ctx.read<FeedbackService>(),
-        ),
-      );
-
-      if (mounted) {
-        await ratingPrompt.markShownForVersion(version);
-      }
-    } catch (_) {
-      // PackageInfo veya dialog hatası — bir sonraki açılışta tekrar dene
-    }
   }
 
   Future<void> _openSupportDialog() async {
@@ -578,19 +533,10 @@ class _CalculatorViewState extends State<CalculatorView> {
             onSelected: (value) {
               if (value == 'theme') {
                 context.read<ThemeService>().toggleTheme();
-              } else if (value == 'report_error') {
-                showDialog<void>(
-                  context: context,
-                  builder: (context) => FeedbackDialog(
-                    feedbackService: context.read<FeedbackService>(),
-                    directMessageForm: true,
-                    submissionType: 'bug',
-                  ),
-                );
               } else if (value == 'support') {
                 _openSupportDialog();
               } else if (value == 'feedback') {
-                showDialog(
+                showDialog<void>(
                   context: context,
                   builder: (context) => FeedbackDialog(
                     feedbackService: context.read<FeedbackService>(),
@@ -618,15 +564,15 @@ class _CalculatorViewState extends State<CalculatorView> {
                 ),
               ),
               PopupMenuItem<String>(
-                value: 'report_error',
+                value: 'feedback',
                 child: Row(
                   children: [
                     Icon(
-                      Icons.bug_report_outlined,
+                      Icons.feedback_outlined,
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
                     const SizedBox(width: 12),
-                    Text('feedback.type.bug'.tr()),
+                    Text('feedback.title'.tr()),
                   ],
                 ),
               ),
@@ -640,17 +586,6 @@ class _CalculatorViewState extends State<CalculatorView> {
                   ],
                 ),
               ),
-              if (_showFeedbackMenuItem)
-                PopupMenuItem<String>(
-                  value: 'feedback',
-                  child: Row(
-                    children: [
-                      const Icon(Icons.star_border),
-                      const SizedBox(width: 12),
-                      Text('feedback.title'.tr()),
-                    ],
-                  ),
-                ),
             ],
           ),
         ],

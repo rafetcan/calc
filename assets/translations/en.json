@@ -36,9 +36,7 @@
     },
     "feedback": {
         "title": "Feedback",
-        "rate_prompt": "How would you rate the app?",
-        "rate_thanks": "Thank you! We're glad you enjoy the app.",
-        "tell_us_more": "What can we improve? Share your thoughts.",
+        "rate_on_play": "Rate on Google Play",
         "type": {
             "label": "Type",
             "bug": "Bug Report",

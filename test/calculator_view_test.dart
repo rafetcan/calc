@@ -1,6 +1,5 @@
 import 'package:calc/features/calculator/services/history_service.dart';
 import 'package:calc/features/calculator/views/calculator_view.dart';
-import 'package:calc/features/feedback/services/rating_prompt_service.dart';
 import 'package:calc/features/support/services/support_state_service.dart';
 import 'package:calc/core/services/theme_service.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +18,6 @@ Future<void> _pump(WidgetTester tester) async {
         ),
         ChangeNotifierProvider<ThemeService>(create: (_) => ThemeService(prefs)),
         Provider<SupportStateService>.value(value: SupportStateService(prefs)),
-        Provider<RatingPromptService>.value(value: RatingPromptService(prefs)),
       ],
       child: const MaterialApp(home: CalculatorView()),
     ),

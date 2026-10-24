@@ -36,9 +36,7 @@
     },
     "feedback": {
         "title": "Comentarios",
-        "rate_prompt": "¿Cómo calificarías la aplicación?",
-        "rate_thanks": "¡Gracias! Nos alegra que disfrutes la aplicación.",
-        "tell_us_more": "¿Qué podemos mejorar? Comparte tus ideas.",
+        "rate_on_play": "Valorar en Google Play",
         "type": {
             "label": "Tipo",
             "bug": "Informe de Error",

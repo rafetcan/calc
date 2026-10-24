@@ -12,7 +12,6 @@ import 'features/calculator/views/calculator_view.dart';
 import 'features/calculator/services/history_service.dart';
 import 'features/calculator/views/history_view.dart';
 import 'features/feedback/services/feedback_service.dart';
-import 'features/feedback/services/rating_prompt_service.dart';
 import 'features/feedback/views/feedback_dialog.dart';
 import 'core/di/locator.dart';
 import 'firebase_options.dart';
@@ -36,7 +35,6 @@ void main() async {
   final prefs = await SharedPreferences.getInstance();
   final historyService = HistoryService(prefs);
   final supportStateService = SupportStateService(prefs);
-  final ratingPromptService = RatingPromptService(prefs);
 
   runApp(
     EasyLocalization(
@@ -62,9 +60,6 @@ void main() async {
           ),
           Provider<SupportStateService>.value(
             value: supportStateService,
-          ),
-          Provider<RatingPromptService>.value(
-            value: ratingPromptService,
           ),
           ChangeNotifierProvider<CalculatorViewModel>(
             create: (context) => CalculatorViewModel(
