@@ -55,6 +55,12 @@ class _SupportDialogState extends State<SupportDialog> {
   Future<void> _onWatchAdTap() async {
     setState(() => _isLoading = true);
 
+    // Reklam pencere açılınca değil, kullanıcı isteyince yüklenir.
+    await widget.adService
+        .loadRewardedAd()
+        .timeout(const Duration(seconds: 10), onTimeout: () => false);
+    if (!mounted) return;
+
     final shown = await widget.adService.showRewardedAd(
       onRewarded: () {
         if (mounted) {
@@ -115,12 +121,6 @@ class _SupportDialogState extends State<SupportDialog> {
     );
 
     if (mounted) setState(() => _isPurchasing = false);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    widget.adService.loadRewardedAd();
   }
 
   @override

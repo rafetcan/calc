@@ -27,20 +27,13 @@ class _CalculatorViewState extends State<CalculatorView> {
   String _expression = '';
   bool _shouldResetDisplay = false;
   bool _isSupportDialogOpen = false;
+  bool _isAdLoading = false;
 
   bool _isOperatorOrParen(String value) =>
       value == '+' || value == '-' || value == '*' || value == '/' ||
       value == '%' || value == '(' || value == ')';
   bool _isNumberOrDot(String value) =>
       RegExp(r'^[0-9.]$').hasMatch(value);
-
-  @override
-  void initState() {
-    super.initState();
-    if (getIt.isRegistered<AdService>()) {
-      getIt.get<AdService>().loadRewardedAd();
-    }
-  }
 
   @override
   void dispose() {
@@ -60,17 +53,26 @@ class _CalculatorViewState extends State<CalculatorView> {
     if (mounted) setState(() => _isSupportDialogOpen = false);
   }
 
-  /// Kalp: ödüllü reklamı doğrudan açar (pencere yok). Reklam hazır değilse
-  /// kısa bir mesaj gösterir ve yeniden yüklemeyi başlatır.
+  /// Kalp: ödüllü reklamı doğrudan açar (pencere yok). Reklam açılışta
+  /// yüklenmez; hazır değilse burada yüklenir, bu sırada kalp yerine
+  /// yükleniyor göstergesi çıkar.
   Future<void> _onHeartPressed() async {
+    if (_isAdLoading) return;
     final adService = getIt.get<AdService>();
 
     if (!adService.isReady) {
-      adService.loadRewardedAd();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('support.ad_error'.tr())),
-      );
-      return;
+      setState(() => _isAdLoading = true);
+      final loaded = await adService
+          .loadRewardedAd()
+          .timeout(const Duration(seconds: 10), onTimeout: () => false);
+      if (!mounted) return;
+      setState(() => _isAdLoading = false);
+      if (!loaded) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('support.ad_error'.tr())),
+        );
+        return;
+      }
     }
 
     setState(() => _isSupportDialogOpen = true);
@@ -516,12 +518,18 @@ class _CalculatorViewState extends State<CalculatorView> {
             builder: (context) {
               final hasSupported = context.read<SupportStateService>().hasSupported;
               return IconButton(
-                icon: Icon(
-                  Icons.favorite,
-                  color: (_isSupportDialogOpen || hasSupported)
-                      ? Colors.red
-                      : Colors.black,
-                ),
+                icon: _isAdLoading
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Icon(
+                        Icons.favorite,
+                        color: (_isSupportDialogOpen || hasSupported)
+                            ? Colors.red
+                            : Colors.black,
+                      ),
                 tooltip: 'app.support'.tr(),
                 onPressed: _onHeartPressed,
               );
