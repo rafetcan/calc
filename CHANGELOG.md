@@ -11,7 +11,8 @@ ve bu proje [Semantic Versioning](https://semver.org/lang/tr/) kullanmaktadır.
 
 ### Added
 - **Kendi uygulamalarımızın tanıtımı:** Firebase Remote Config ile uzaktan açılıp kapanır (`calc_promo_enabled`, `calc_promo_package`, `calc_promo_name`; varsayılan kapalı). Kampanya açıkken menüde tanıtım satırı ve menü simgesinde nokta görünür; kalpten izlenen reklamdan sonra teşekkür kartında "Play'de aç" düğmesi çıkar (uygulama başına en fazla 3 kez, sayfa açıldıysa bir daha çıkmaz). Kalp yine doğrudan reklamı açar, araya soru girmez
-- `promo_shown` ve `promo_open` Analytics olayları
+- `promo_shown` ve `promo_open` Analytics olayları (projede Analytics kapalı olduğu için şimdilik sayılmaz)
+- Play bağlantısında `referrer=utm_source=calc&utm_medium=promo`: tanıtılan uygulamanın Play Console edinme raporunda bu uygulamadan gelenler ayrı görünür
 - `promo.*` çevirileri (TR/EN/ZH/ES/HI)
 
 ### Changed

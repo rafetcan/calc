@@ -26,8 +26,12 @@ class PromoCampaign {
     return PromoCampaign(package: pkg, name: title);
   }
 
-  Uri get storeUri =>
-      Uri.parse('https://play.google.com/store/apps/details?id=$package');
+  /// `referrer`, tanıtılan uygulamanın Play Console edinme raporunda bu
+  /// uygulamadan gelenlerin ayrı görünmesini sağlar (Analytics gerekmez).
+  Uri get storeUri => Uri.https('play.google.com', '/store/apps/details', {
+        'id': package,
+        'referrer': 'utm_source=calc&utm_medium=promo',
+      });
 }
 
 typedef PromoFetcher = Future<PromoCampaign?> Function();

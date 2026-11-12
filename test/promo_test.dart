@@ -48,7 +48,8 @@ void main() {
       expect(c!.package, 'com.akidesoft.newgame');
       expect(c.name, 'Yeni Oyun');
       expect(c.storeUri.toString(),
-          'https://play.google.com/store/apps/details?id=com.akidesoft.newgame');
+          'https://play.google.com/store/apps/details?id=com.akidesoft.newgame'
+          '&referrer=utm_source%3Dcalc%26utm_medium%3Dpromo');
     });
 
     test('boş ad, bozuk paket ve uygulamanın kendisi reddedilir', () {
