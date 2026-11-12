@@ -149,4 +149,41 @@ void main() {
       expect(find.text('1.234.567.890.123.456.789'), findsOneWidget);
     });
   });
+
+  group('ekrana sığdırma', () {
+    // Telefon genişliği: 360 dp, ekran alanı 312 dp (24 dp kenar boşluğu).
+    Future<void> pumpPhone(WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 3;
+      addTearDown(tester.view.reset);
+      await _pump(tester);
+    }
+
+    Text display(WidgetTester tester) =>
+        tester.widget<Text>(find.byKey(const Key('display')));
+
+    testWidgets('kısa sayı tam boyda çizilir', (tester) async {
+      await pumpPhone(tester);
+      await _type(tester, '123');
+      expect(display(tester).style!.fontSize, 48);
+    });
+
+    testWidgets('sığmayan sayı küçülür ve ekrana sığar', (tester) async {
+      await pumpPhone(tester);
+      await _type(tester, '1234567');
+      expect(display(tester).style!.fontSize, lessThan(48));
+      expect(tester.getSize(find.byKey(const Key('display'))).width,
+          lessThanOrEqualTo(312));
+    });
+
+    testWidgets('uzun ondalık sonuç küçülür, en küçük boyun altına inmez',
+        (tester) async {
+      await pumpPhone(tester);
+      await _type(tester, '500');
+      await _tap(tester, '÷');
+      await _type(tester, '3=');
+      expect(display(tester).data, '166.6666666667');
+      expect(display(tester).style!.fontSize, inInclusiveRange(28, 47));
+    });
+  });
 }

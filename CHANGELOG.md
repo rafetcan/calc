@@ -15,6 +15,9 @@ ve bu proje [Semantic Versioning](https://semver.org/lang/tr/) kullanmaktadır.
 - Play bağlantısında `referrer=utm_source=calc&utm_medium=promo`: tanıtılan uygulamanın Play Console edinme raporunda bu uygulamadan gelenler ayrı görünür
 - `promo.*` çevirileri (TR/EN/ZH/ES/HI)
 
+### Fixed
+- **Ekrana sığmayan sonuç:** uzun sayılar (örn. `500÷3` = `166.6666666667`) soldan kesiliyordu; yazı artık sığana kadar küçülür (48 → en az 28), en küçük boyda da sığmazsa yatay kaydırılır
+
 ### Changed
 - **Ödüllü reklam isteğe bağlı yüklenir:** reklam artık her açılışta değil, kalbe ya da "reklam izle"ye basılınca yüklenir (10 sn zaman aşımı, yüklenirken kalp yerine ilerleme göstergesi). AdMob'da gösterime dönüşmeyen istekler azalır
 - Yüklenen reklam 55 dakika sonra geçersiz sayılır; art arda basışlar tek istek üretir

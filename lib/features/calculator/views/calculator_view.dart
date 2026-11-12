@@ -1,3 +1,4 @@
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -22,6 +23,9 @@ class CalculatorView extends StatefulWidget {
 }
 
 class _CalculatorViewState extends State<CalculatorView> {
+  static const double _displayMaxFontSize = 48;
+  static const double _displayMinFontSize = 28;
+
   /// Sadece gösterge metnini günceller; tüm `Scaffold`/`AppBar`/tuş ızgarasını
   /// her basışta yeniden kurmaz — giriş gecikmesini ve kare düşmesini azaltır.
   final ValueNotifier<String> _displayNotifier = ValueNotifier<String>('0');
@@ -671,18 +675,45 @@ class _CalculatorViewState extends State<CalculatorView> {
                     ValueListenableBuilder<String>(
                       valueListenable: _displayNotifier,
                       builder: (context, display, _) {
-                        return SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          reverse: true,
-                          child: Text(
-                            display,
-                            style: TextStyle(
-                              fontSize: 48,
+                        // Uzun sayı ekrana sığana kadar küçülür; en küçük
+                        // boyutta da sığmıyorsa yatay kaydırılır.
+                        return LayoutBuilder(
+                          builder: (context, constraints) {
+                            final style = TextStyle(
+                              fontSize: _displayMaxFontSize,
                               fontWeight: FontWeight.bold,
                               color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                            textAlign: TextAlign.end,
-                          ),
+                            );
+                            final painter = TextPainter(
+                              text: TextSpan(text: display, style: style),
+                              textDirection: ui.TextDirection.ltr,
+                              textScaler: MediaQuery.textScalerOf(context),
+                              maxLines: 1,
+                            )..layout();
+                            final textWidth = painter.width;
+                            painter.dispose();
+                            var fontSize = _displayMaxFontSize;
+                            if (textWidth > constraints.maxWidth) {
+                              // %1 pay: yuvarlama yüzünden taşmasın.
+                              fontSize = (_displayMaxFontSize *
+                                      constraints.maxWidth /
+                                      textWidth *
+                                      0.99)
+                                  .clamp(_displayMinFontSize,
+                                      _displayMaxFontSize);
+                            }
+                            return SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              reverse: true,
+                              child: Text(
+                                display,
+                                key: const Key('display'),
+                                maxLines: 1,
+                                style: style.copyWith(fontSize: fontSize),
+                                textAlign: TextAlign.end,
+                              ),
+                            );
+                          },
                         );
                       },
                     ),
