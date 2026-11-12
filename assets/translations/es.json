@@ -78,5 +78,10 @@
         "buy_coffee": "Invítame un café",
         "support_project": "Apoyar el proyecto",
         "already_supported": "Ya apoyaste el proyecto. ¡Gracias!"
+    },
+    "promo": {
+        "new_app": "Descubre nuestra nueva app: {name}",
+        "open": "Abrir en Play",
+        "close": "Cerrar"
     }
 }

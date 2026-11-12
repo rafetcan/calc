@@ -78,5 +78,10 @@
         "buy_coffee": "Buy me a coffee",
         "support_project": "Support the Project",
         "already_supported": "You have already supported the project. Thank you!"
+    },
+    "promo": {
+        "new_app": "Check out our new app: {name}",
+        "open": "Open in Play",
+        "close": "Close"
     }
 }

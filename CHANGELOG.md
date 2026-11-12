@@ -7,6 +7,18 @@ ve bu proje [Semantic Versioning](https://semver.org/lang/tr/) kullanmaktadır.
 
 ## [Unreleased]
 
+## [1.1.8] - 2026-11-12
+
+### Added
+- **Kendi uygulamalarımızın tanıtımı:** Firebase Remote Config ile uzaktan açılıp kapanır (`calc_promo_enabled`, `calc_promo_package`, `calc_promo_name`; varsayılan kapalı). Kampanya açıkken menüde tanıtım satırı ve menü simgesinde nokta görünür; kalpten izlenen reklamdan sonra teşekkür kartında "Play'de aç" düğmesi çıkar (uygulama başına en fazla 3 kez, sayfa açıldıysa bir daha çıkmaz). Kalp yine doğrudan reklamı açar, araya soru girmez
+- `promo_shown` ve `promo_open` Analytics olayları
+- `promo.*` çevirileri (TR/EN/ZH/ES/HI)
+
+### Changed
+- **Ödüllü reklam isteğe bağlı yüklenir:** reklam artık her açılışta değil, kalbe ya da "reklam izle"ye basılınca yüklenir (10 sn zaman aşımı, yüklenirken kalp yerine ilerleme göstergesi). AdMob'da gösterime dönüşmeyen istekler azalır
+- Yüklenen reklam 55 dakika sonra geçersiz sayılır; art arda basışlar tek istek üretir
+- Firebase paketleri güncellendi (`firebase_core` 4.15, `firebase_analytics` 12.6, `firebase_crashlytics` 5.4, `cloud_firestore` 6.10); `firebase_remote_config` eklendi
+
 ## [1.1.7] - 2026-10-24
 
 ### Fixed

@@ -1,4 +1,4 @@
-import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_core/firebase_core.dart' hide FirebaseService;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +16,8 @@ import 'features/feedback/views/feedback_dialog.dart';
 import 'core/di/locator.dart';
 import 'firebase_options.dart';
 import 'features/support/services/support_state_service.dart';
+import 'features/promo/services/promo_service.dart';
+import 'features/promo/services/promo_remote_config.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 void main() async {
@@ -35,6 +37,16 @@ void main() async {
   final prefs = await SharedPreferences.getInstance();
   final historyService = HistoryService(prefs);
   final supportStateService = SupportStateService(prefs);
+
+  // Tanıtım ayarı arka planda okunur; açılışı bekletmez.
+  final promoService = PromoService(
+    prefs,
+    fetch: fetchPromoFromRemoteConfig,
+    logEvent: (name, params) =>
+        FirebaseService.logEvent(name: name, parameters: params),
+  );
+  getIt.registerSingleton<PromoService>(promoService);
+  promoService.load();
 
   runApp(
     EasyLocalization(

@@ -79,5 +79,10 @@
         "support_project": "Projeyi Destekle",
         "already_supported": "Projeyi zaten desteklediniz. Teşekkürler!",
         "purchase_connection_error": "Ödeme servisine bağlanılamadı. Lütfen fiziksel cihazda ve Google Play ile test edin."
+    },
+    "promo": {
+        "new_app": "Yeni uygulamamıza göz atın: {name}",
+        "open": "Play'de aç",
+        "close": "Kapat"
     }
 }

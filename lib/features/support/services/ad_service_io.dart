@@ -70,6 +70,7 @@ class AdService {
   Future<bool> showRewardedAd({
     required void Function() onRewarded,
     required void Function(String) onError,
+    void Function()? onDismissed,
   }) async {
     if (!isReady) {
       onError('Ad not ready');
@@ -84,6 +85,7 @@ class AdService {
         ad.dispose();
         // İzleyen kullanıcı yine izleyebilir: bir sonrakini hazırla.
         loadRewardedAd();
+        onDismissed?.call();
       },
       onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
         ad.dispose();

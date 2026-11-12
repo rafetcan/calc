@@ -78,5 +78,10 @@
         "buy_coffee": "请我喝咖啡",
         "support_project": "支持项目",
         "already_supported": "您已支持该项目，感谢！"
+    },
+    "promo": {
+        "new_app": "来看看我们的新应用：{name}",
+        "open": "在 Play 中打开",
+        "close": "关闭"
     }
 }

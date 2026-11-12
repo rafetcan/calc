@@ -10,6 +10,8 @@ import '../../feedback/views/feedback_dialog.dart';
 import '../../support/views/support_dialog.dart';
 import '../../support/services/ad_service.dart';
 import '../../support/services/support_state_service.dart';
+import '../../promo/services/promo_service.dart';
+import '../../promo/views/promo_thanks_dialog.dart';
 import '../../../core/di/locator.dart';
 
 class CalculatorView extends StatefulWidget {
@@ -76,16 +78,36 @@ class _CalculatorViewState extends State<CalculatorView> {
     }
 
     setState(() => _isSupportDialogOpen = true);
+    var rewarded = false;
     await adService.showRewardedAd(
-      onRewarded: () {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('support.thank_you'.tr())),
-        );
-      },
+      onRewarded: () => rewarded = true,
       onError: (_) {},
+      onDismissed: () {
+        if (rewarded) _showThanks();
+      },
     );
     if (mounted) setState(() => _isSupportDialogOpen = false);
+  }
+
+  PromoService? get _promo =>
+      getIt.isRegistered<PromoService>() ? getIt.get<PromoService>() : null;
+
+  /// Reklam kapandıktan sonra teşekkür: etkin tanıtım varsa kart, yoksa
+  /// kısa mesaj.
+  void _showThanks() {
+    if (!mounted) return;
+    final promo = _promo;
+    if (promo != null && promo.shouldShowAfterAd) {
+      promo.markAfterAdShown();
+      showDialog<void>(
+        context: context,
+        builder: (context) => PromoThanksDialog(promoService: promo),
+      );
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('support.thank_you'.tr())),
+    );
   }
 
   void _onButtonPressed(String value) {
@@ -536,10 +558,20 @@ class _CalculatorViewState extends State<CalculatorView> {
             },
           ),
           PopupMenuButton<String>(
-            icon: const Icon(Icons.menu),
+            icon: ListenableBuilder(
+              listenable: _promo ?? _displayNotifier,
+              builder: (context, _) => Badge(
+                isLabelVisible: _promo?.showMenuDot ?? false,
+                smallSize: 8,
+                child: const Icon(Icons.menu),
+              ),
+            ),
             tooltip: 'app.settings'.tr(),
+            onOpened: () => _promo?.markMenuSeen(),
             onSelected: (value) {
-              if (value == 'theme') {
+              if (value == 'promo') {
+                _promo?.open('menu');
+              } else if (value == 'theme') {
                 context.read<ThemeService>().toggleTheme();
               } else if (value == 'support') {
                 _openSupportDialog();
@@ -553,6 +585,25 @@ class _CalculatorViewState extends State<CalculatorView> {
               }
             },
             itemBuilder: (context) => [
+              if (_promo?.campaign != null)
+                PopupMenuItem<String>(
+                  value: 'promo',
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.new_releases_outlined,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      const SizedBox(width: 12),
+                      Flexible(
+                        child: Text(
+                          _promo!.campaign!.name,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               PopupMenuItem<String>(
                 value: 'theme',
                 child: Consumer<ThemeService>(
@@ -590,7 +641,12 @@ class _CalculatorViewState extends State<CalculatorView> {
                   children: [
                     const Icon(Icons.favorite_border),
                     const SizedBox(width: 12),
-                    Text('support.akidesoft_apps'.tr()),
+                    Flexible(
+                      child: Text(
+                        'support.akidesoft_apps'.tr(),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
                   ],
                 ),
               ),
