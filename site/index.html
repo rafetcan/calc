@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calculator by AkideSoft – Simple, clear and accurate</title>
+  <meta name="description" content="A fast, accurate and clutter-free calculator for Android. Percent, parentheses, history, light and dark themes, in five languages.">
+  <meta name="theme-color" content="#2e7d32">
+  <link rel="icon" type="image/png" href="assets/icon.png">
+  <link rel="apple-touch-icon" href="assets/icon.png">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Calculator by AkideSoft">
+  <meta property="og:description" content="A fast, accurate and clutter-free calculator for Android, in five languages.">
+  <meta property="og:image" content="assets/shot-light.png">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "MobileApplication",
+    "name": "Calculator",
+    "operatingSystem": "ANDROID",
+    "applicationCategory": "UtilitiesApplication",
+    "inLanguage": ["tr", "en", "es", "zh", "hi"],
+    "publisher": { "@type": "Organization", "name": "AkideSoft" },
+    "installUrl": "https://play.google.com/store/apps/details?id=com.akidesoft.calc",
+    "downloadUrl": "https://play.google.com/store/apps/details?id=com.akidesoft.calc"
+  }
+  </script>
+
+  <style>
+    :root {
+      --bg: #f6f8f6;
+      --surface: #ffffff;
+      --surface-2: #eef2ee;
+      --text: #14201a;
+      --muted: #52625a;
+      --line: #dfe6e0;
+      --brand: #2e7d32;
+      --brand-strong: #1b5e20;
+      --brand-soft: #e3f1e4;
+      --on-brand: #ffffff;
+      --shadow: 0 18px 50px rgba(20, 40, 28, .16);
+      --radius: 20px;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0f1612;
+        --surface: #17211b;
+        --surface-2: #1d2a22;
+        --text: #eaf2ec;
+        --muted: #a2b3a8;
+        --line: #26352c;
+        --brand: #66bb6a;
+        --brand-strong: #81c784;
+        --brand-soft: #1e3322;
+        --on-brand: #0b1a0f;
+        --shadow: 0 18px 50px rgba(0, 0, 0, .5);
+      }
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Noto Sans SC", "Noto Sans Devanagari", "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { max-width: 100%; height: auto; display: block; }
+    a { color: inherit; }
+    .wrap { width: min(1120px, 100% - 40px); margin-inline: auto; }
+
+    /* Header */
+    header {
+      position: sticky; top: 0; z-index: 10;
+      background: color-mix(in srgb, var(--bg) 86%, transparent);
+      backdrop-filter: saturate(160%) blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+    .bar { display: flex; align-items: center; gap: 16px; height: 64px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; text-decoration: none; }
+    .brand img { width: 34px; height: 34px; border-radius: 9px; }
+    nav { margin-left: auto; display: flex; align-items: center; gap: 22px; }
+    nav a { text-decoration: none; color: var(--muted); font-size: .95rem; font-weight: 500; }
+    nav a:hover { color: var(--text); }
+    .lang {
+      appearance: none; border: 1px solid var(--line); background: var(--surface);
+      color: var(--text); border-radius: 999px; padding: 7px 14px; font: inherit; font-size: .9rem; cursor: pointer;
+    }
+    @media (max-width: 720px) { nav a { display: none; } nav { margin-left: auto; } }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; gap: 12px;
+      background: var(--brand); color: var(--on-brand);
+      text-decoration: none; font-weight: 700;
+      padding: 14px 26px; border-radius: 14px;
+      box-shadow: 0 8px 22px color-mix(in srgb, var(--brand) 35%, transparent);
+      transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+    .btn:hover { transform: translateY(-2px); background: var(--brand-strong); }
+    .btn svg { width: 26px; height: 26px; flex: none; }
+    .btn small { display: block; font-size: .72rem; font-weight: 500; opacity: .9; letter-spacing: .02em; }
+    .btn span.t { display: block; font-size: 1.12rem; line-height: 1.15; }
+    .btn:focus-visible, .lang:focus-visible, nav a:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; }
+
+    /* Hero */
+    .hero { padding: 72px 0 40px; }
+    .hero-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 48px; align-items: center; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--brand-soft); color: var(--brand-strong);
+      padding: 6px 14px; border-radius: 999px; font-size: .85rem; font-weight: 600;
+    }
+    h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); line-height: 1.1; margin: 18px 0 16px; letter-spacing: -.02em; }
+    .lead { font-size: 1.15rem; color: var(--muted); max-width: 34em; margin: 0 0 30px; }
+    .cta-row { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; }
+    .cta-note { color: var(--muted); font-size: .9rem; }
+    .phones { position: relative; height: 560px; }
+    .phone {
+      position: absolute; width: 250px; aspect-ratio: 1080 / 2250;
+      border-radius: 34px; overflow: hidden; background: #000;
+      border: 8px solid #101513; box-shadow: var(--shadow);
+    }
+    .phone img { width: 100%; margin-top: -4.3%; }
+    .phone.p1 { left: 8%; top: 40px; transform: rotate(-5deg); z-index: 2; }
+    .phone.p2 { right: 4%; top: 0; transform: rotate(4deg); }
+    @media (max-width: 900px) {
+      .hero { padding-top: 40px; }
+      .hero-grid { grid-template-columns: 1fr; gap: 24px; }
+      .phones { height: 500px; max-width: 460px; margin-inline: auto; width: 100%; }
+      .phone { width: 220px; }
+    }
+
+    /* Sections */
+    section { padding: 72px 0; }
+    .section-head { text-align: center; max-width: 640px; margin: 0 auto 44px; }
+    .section-head h2 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); margin: 0 0 10px; letter-spacing: -.01em; }
+    .section-head p { margin: 0; color: var(--muted); }
+
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--surface); border: 1px solid var(--line);
+      border-radius: var(--radius); padding: 26px;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+    .ico {
+      width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center;
+      background: var(--brand-soft); color: var(--brand-strong); margin-bottom: 16px;
+    }
+    .ico svg { width: 24px; height: 24px; }
+    .card h3 { margin: 0 0 6px; font-size: 1.1rem; }
+    .card p { margin: 0; color: var(--muted); font-size: .98rem; }
+
+    .alt { background: var(--surface-2); }
+    .shots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; justify-items: center; }
+    @media (max-width: 760px) { .shots { grid-template-columns: 1fr; } }
+    figure { margin: 0; text-align: center; }
+    figure .phone { position: relative; inset: auto; transform: none; margin: 0 auto 16px; width: 240px; }
+    figcaption { font-weight: 600; }
+
+    /* Final CTA */
+    .final { text-align: center; }
+    .final-box {
+      background: linear-gradient(135deg, var(--brand), var(--brand-strong));
+      color: var(--on-brand); border-radius: 28px; padding: 64px 24px;
+    }
+    .final-box h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); margin: 0 0 10px; }
+    .final-box p { margin: 0 auto 28px; max-width: 34em; opacity: .92; }
+    .final-box .btn { background: #fff; color: #14201a; box-shadow: 0 10px 28px rgba(0,0,0,.25); }
+    .final-box .btn:hover { background: #f1f5f1; }
+    .url { display: block; margin-top: 16px; font-size: .9rem; opacity: .85; word-break: break-all; }
+    .url a { text-decoration: underline; }
+
+    footer { padding: 36px 0 48px; color: var(--muted); font-size: .92rem; border-top: 1px solid var(--line); }
+    .foot { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; align-items: center; }
+    .foot a { color: var(--muted); }
+    .foot a:hover { color: var(--text); }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="wrap bar">
+    <a class="brand" href="#top"><img src="assets/icon.png" alt="" width="34" height="34"><span data-i18n="app_name">Calculator</span></a>
+    <nav aria-label="Main">
+      <a href="#features" data-i18n="nav_features">Features</a>
+      <a href="#screens" data-i18n="nav_screens">Screens</a>
+      <a href="#download" data-i18n="nav_download">Download</a>
+      <label class="sr" style="position:absolute;left:-9999px" for="lang" data-i18n="lang_label">Language</label>
+      <select id="lang" class="lang" aria-label="Language">
+        <option value="en">English</option>
+        <option value="tr">Türkçe</option>
+        <option value="es">Español</option>
+        <option value="zh">中文</option>
+        <option value="hi">हिन्दी</option>
+      </select>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <div class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="chip"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.6 9.5 6.5 3.1a1 1 0 0 0-1.5.9v16a1 1 0 0 0 1.5.9l11.1-6.4a1 1 0 0 0 0-1.7z"/></svg><span data-i18n="chip">Android app</span></span>
+        <h1 data-i18n="hero_title">A calculator that is simply clear.</h1>
+        <p class="lead" data-i18n="hero_sub">Fast, accurate and clutter-free. Everything you need for daily math, in five languages, in light and dark.</p>
+        <div class="cta-row">
+          <a class="btn play-link" href="https://play.google.com/store/apps/details?id=com.akidesoft.calc" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.6 2.3a1.6 1.6 0 0 0-.6 1.3v16.8c0 .5.2 1 .6 1.3L13.3 12 3.6 2.3zm11.1 8.7 2.7-2.7L5.3 1.5l9.4 9.5zm4.7-1.6-3.1 1.8 3.1 1.8c1 .6 1 1.9 0 2.4l-3.1 1.8-2.9-2.9 3-3-3-3 2.9-2.9 3.1 1.8c1 .6 1 1.8 0 2.4zM5.3 22.5l12.1-6.8-2.7-2.7-9.4 9.5z"/></svg>
+            <span><small data-i18n="btn_small">GET IT ON</small><span class="t">Google Play</span></span>
+          </a>
+          <span class="cta-note" data-i18n="cta_note">Works offline. No sign-up.</span>
+        </div>
+      </div>
+      <div class="phones" aria-hidden="true">
+        <div class="phone p1"><img src="assets/shot-light.png" alt="" width="1080" height="2400"></div>
+        <div class="phone p2"><img src="assets/shot-dark.png" alt="" width="1080" height="2400"></div>
+      </div>
+    </div>
+  </div>
+
+  <section id="features">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 data-i18n="feat_title">Everything you need, nothing you don't</h2>
+        <p data-i18n="feat_sub">Built for quick everyday calculations.</p>
+      </div>
+      <div class="grid">
+        <article class="card">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></div>
+          <h3 data-i18n="f1_t">Full set of operations</h3>
+          <p data-i18n="f1_d">Add, subtract, multiply (×), divide (÷), percent (%) and parentheses, with correct order of operations.</p>
+        </article>
+        <article class="card">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4.5 4.5L19 7"/></svg></div>
+          <h3 data-i18n="f2_t">Clean, accurate results</h3>
+          <p data-i18n="f2_d">No more 14.6699999. 6.13 + 8.54 simply shows 14.67.</p>
+        </article>
+        <article class="card">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg></div>
+          <h3 data-i18n="f3_t">History</h3>
+          <p data-i18n="f3_d">Every calculation is saved. Reopen it with a tap or clear it whenever you like.</p>
+        </article>
+        <article class="card">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg></div>
+          <h3 data-i18n="f4_t">Light and dark theme</h3>
+          <p data-i18n="f4_d">Easy on the eyes, day and night. Switch with one tap.</p>
+        </article>
+        <article class="card">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></div>
+          <h3 data-i18n="f5_t">Five languages</h3>
+          <p data-i18n="f5_d">Turkish, English, Spanish, Chinese and Hindi. The app speaks yours.</p>
+        </article>
+        <article class="card">
+          <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 4.5 3.2 8 8 9 4.8-1 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg></div>
+          <h3 data-i18n="f6_t">Light and calm</h3>
+          <p data-i18n="f6_d">No intrusive ads and no sign-up. Supporting us is always optional.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="screens" class="alt">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 data-i18n="shots_title">See it in action</h2>
+        <p data-i18n="shots_sub">Large keys, clear display, no clutter.</p>
+      </div>
+      <div class="shots">
+        <figure>
+          <div class="phone"><img src="assets/shot-light.png" alt="" loading="lazy" width="1080" height="2400"></div>
+          <figcaption data-i18n="cap1">Clear results</figcaption>
+        </figure>
+        <figure>
+          <div class="phone"><img src="assets/shot-history.png" alt="" loading="lazy" width="1080" height="2400"></div>
+          <figcaption data-i18n="cap2">History</figcaption>
+        </figure>
+        <figure>
+          <div class="phone"><img src="assets/shot-dark.png" alt="" loading="lazy" width="1080" height="2400"></div>
+          <figcaption data-i18n="cap3">Dark theme</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="download" class="final">
+    <div class="wrap">
+      <div class="final-box">
+        <h2 data-i18n="final_title">Try it today</h2>
+        <p data-i18n="final_sub">Download Calculator from Google Play and start calculating in seconds.</p>
+        <a class="btn play-link" href="https://play.google.com/store/apps/details?id=com.akidesoft.calc" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.6 2.3a1.6 1.6 0 0 0-.6 1.3v16.8c0 .5.2 1 .6 1.3L13.3 12 3.6 2.3zm11.1 8.7 2.7-2.7L5.3 1.5l9.4 9.5zm4.7-1.6-3.1 1.8 3.1 1.8c1 .6 1 1.9 0 2.4l-3.1 1.8-2.9-2.9 3-3-3-3 2.9-2.9 3.1 1.8c1 .6 1 1.8 0 2.4zM5.3 22.5l12.1-6.8-2.7-2.7-9.4 9.5z"/></svg>
+          <span><small data-i18n="btn_small">GET IT ON</small><span class="t">Google Play</span></span>
+        </a>
+        <span class="url"><a href="https://play.google.com/store/apps/details?id=com.akidesoft.calc" rel="noopener">https://play.google.com/store/apps/details?id=com.akidesoft.calc</a></span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <span>© 2026 AkideSoft. <span data-i18n="rights">All rights reserved.</span></span>
+    <span>
+      <a href="https://play.google.com/store/apps/details?id=com.akidesoft.calc" rel="noopener">Google Play</a>
+      &nbsp;·&nbsp;
+      <a href="https://play.google.com/store/apps/developer?id=AkideSoft" rel="noopener" data-i18n="more_apps">More apps by AkideSoft</a>
+    </span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var I18N = {
+    en: {
+      title: "Calculator by AkideSoft – Simple, clear and accurate",
+      desc: "A fast, accurate and clutter-free calculator for Android. Percent, parentheses, history, light and dark themes, in five languages.",
+      app_name: "Calculator", nav_features: "Features", nav_screens: "Screens", nav_download: "Download", lang_label: "Language",
+      chip: "Android app", hero_title: "A calculator that is simply clear.",
+      hero_sub: "Fast, accurate and clutter-free. Everything you need for daily math, in five languages, in light and dark.",
+      btn_small: "GET IT ON", cta_note: "Works offline. No sign-up.",
+      feat_title: "Everything you need, nothing you don't", feat_sub: "Built for quick everyday calculations.",
+      f1_t: "Full set of operations", f1_d: "Add, subtract, multiply (×), divide (÷), percent (%) and parentheses, with correct order of operations.",
+      f2_t: "Clean, accurate results", f2_d: "No more 14.6699999. 6.13 + 8.54 simply shows 14.67.",
+      f3_t: "History", f3_d: "Every calculation is saved. Reopen it with a tap or clear it whenever you like.",
+      f4_t: "Light and dark theme", f4_d: "Easy on the eyes, day and night. Switch with one tap.",
+      f5_t: "Five languages", f5_d: "Turkish, English, Spanish, Chinese and Hindi. The app speaks yours.",
+      f6_t: "Light and calm", f6_d: "No intrusive ads and no sign-up. Supporting us is always optional.",
+      shots_title: "See it in action", shots_sub: "Large keys, clear display, no clutter.",
+      cap1: "Clear results", cap2: "History", cap3: "Dark theme",
+      final_title: "Try it today", final_sub: "Download Calculator from Google Play and start calculating in seconds.",
+      rights: "All rights reserved.", more_apps: "More apps by AkideSoft"
+    },
+    tr: {
+      title: "AkideSoft Hesap Makinesi – Sade, net ve doğru",
+      desc: "Android için hızlı, doğru ve gösterişsiz bir hesap makinesi. Yüzde, parantez, geçmiş, açık ve koyu tema; beş dilde.",
+      app_name: "Hesap Makinesi", nav_features: "Özellikler", nav_screens: "Ekranlar", nav_download: "İndir", lang_label: "Dil",
+      chip: "Android uygulaması", hero_title: "Sade, net ve doğru bir hesap makinesi.",
+      hero_sub: "Hızlı, doğru ve gösterişsiz. Günlük hesaplarınız için gereken her şey; beş dilde, açık ve koyu temayla.",
+      btn_small: "İNDİR:", cta_note: "İnternetsiz çalışır. Üyelik yok.",
+      feat_title: "İhtiyacınız olan her şey, fazlası yok", feat_sub: "Günlük hızlı hesaplar için tasarlandı.",
+      f1_t: "Tam işlem seti", f1_d: "Toplama, çıkarma, çarpma (×), bölme (÷), yüzde (%) ve parantez; işlem önceliği doğru uygulanır.",
+      f2_t: "Temiz ve doğru sonuçlar", f2_d: "14.6699999 gibi sonuçlar yok. 6.13 + 8.54 doğrudan 14.67 gösterilir.",
+      f3_t: "Geçmiş", f3_d: "Her işlem kaydedilir. Dokunarak tekrar açın, dilediğinizde silin.",
+      f4_t: "Açık ve koyu tema", f4_d: "Gece gündüz gözünüzü yormaz. Tek dokunuşla değiştirin.",
+      f5_t: "Beş dil", f5_d: "Türkçe, İngilizce, İspanyolca, Çince ve Hintçe: uygulama sizin dilinizi konuşur.",
+      f6_t: "Hafif ve sakin", f6_d: "Rahatsız eden reklam yok, üyelik yok. Destek olmak her zaman isteğe bağlı.",
+      shots_title: "Uygulamada görün", shots_sub: "Büyük tuşlar, net ekran, gereksiz hiçbir şey yok.",
+      cap1: "Net sonuçlar", cap2: "Geçmiş", cap3: "Koyu tema",
+      final_title: "Hemen deneyin", final_sub: "Hesap Makinesi'ni Google Play'den indirin, saniyeler içinde hesaplamaya başlayın.",
+      rights: "Tüm hakları saklıdır.", more_apps: "AkideSoft'un diğer uygulamaları"
+    },
+    es: {
+      title: "Calculadora de AkideSoft – Simple, clara y precisa",
+      desc: "Una calculadora rápida, exacta y sin distracciones para Android. Porcentaje, paréntesis, historial, tema claro y oscuro, en cinco idiomas.",
+      app_name: "Calculadora", nav_features: "Funciones", nav_screens: "Pantallas", nav_download: "Descargar", lang_label: "Idioma",
+      chip: "App para Android", hero_title: "Una calculadora simple, clara y precisa.",
+      hero_sub: "Rápida, exacta y sin distracciones. Todo lo que necesitas para tus cuentas diarias, en cinco idiomas, con tema claro y oscuro.",
+      btn_small: "DISPONIBLE EN", cta_note: "Funciona sin conexión. Sin registro.",
+      feat_title: "Todo lo que necesitas, nada de más", feat_sub: "Hecha para los cálculos rápidos de cada día.",
+      f1_t: "Todas las operaciones", f1_d: "Suma, resta, multiplicación (×), división (÷), porcentaje (%) y paréntesis, con la prioridad de operaciones correcta.",
+      f2_t: "Resultados limpios y exactos", f2_d: "Sin resultados como 14.6699999. 6.13 + 8.54 muestra directamente 14.67.",
+      f3_t: "Historial", f3_d: "Cada cálculo se guarda. Ábrelo con un toque o bórralo cuando quieras.",
+      f4_t: "Tema claro y oscuro", f4_d: "Cómoda para la vista de día y de noche. Cambia con un toque.",
+      f5_t: "Cinco idiomas", f5_d: "Turco, inglés, español, chino e hindi: la app habla tu idioma.",
+      f6_t: "Ligera y tranquila", f6_d: "Sin anuncios molestos y sin registro. Apoyar es siempre opcional.",
+      shots_title: "Míralo en acción", shots_sub: "Teclas grandes, pantalla clara, sin ruido.",
+      cap1: "Resultados claros", cap2: "Historial", cap3: "Tema oscuro",
+      final_title: "Pruébala hoy", final_sub: "Descarga Calculadora desde Google Play y empieza a calcular en segundos.",
+      rights: "Todos los derechos reservados.", more_apps: "Más apps de AkideSoft"
+    },
+    zh: {
+      title: "AkideSoft 计算器 – 简洁、清晰、精准",
+      desc: "适用于 Android 的快速、准确、无干扰计算器。百分比、括号、历史记录、浅色与深色主题，支持五种语言。",
+      app_name: "计算器", nav_features: "功能", nav_screens: "截图", nav_download: "下载", lang_label: "语言",
+      chip: "Android 应用", hero_title: "简洁、清晰、精准的计算器。",
+      hero_sub: "快速、准确、无干扰。日常计算所需的一切，支持五种语言，浅色与深色主题。",
+      btn_small: "前往下载", cta_note: "离线可用，无需注册。",
+      feat_title: "需要的都有，多余的没有", feat_sub: "为日常快速计算而设计。",
+      f1_t: "完整运算", f1_d: "加、减、乘（×）、除（÷）、百分比（%）与括号，并遵循正确的运算优先级。",
+      f2_t: "结果干净准确", f2_d: "不再出现 14.6699999 这样的结果。6.13 + 8.54 直接显示 14.67。",
+      f3_t: "历史记录", f3_d: "每次计算都会保存。轻点即可重新打开，也可随时清除。",
+      f4_t: "浅色与深色主题", f4_d: "白天黑夜都护眼，一键切换。",
+      f5_t: "五种语言", f5_d: "土耳其语、英语、西班牙语、中文和印地语：应用说您的语言。",
+      f6_t: "轻巧安静", f6_d: "没有打扰的广告，无需注册。支持我们永远是自愿的。",
+      shots_title: "实际效果", shots_sub: "大按键，清晰显示，毫无杂乱。",
+      cap1: "清晰的结果", cap2: "历史记录", cap3: "深色主题",
+      final_title: "立即体验", final_sub: "从 Google Play 下载计算器，几秒钟即可开始计算。",
+      rights: "保留所有权利。", more_apps: "AkideSoft 的更多应用"
+    },
+    hi: {
+      title: "AkideSoft कैलकुलेटर – सरल, साफ़ और सटीक",
+      desc: "Android के लिए तेज़, सटीक और बिना भटकाव वाला कैलकुलेटर। प्रतिशत, कोष्ठक, हिस्ट्री, लाइट और डार्क थीम, पाँच भाषाओं में।",
+      app_name: "कैलकुलेटर", nav_features: "सुविधाएँ", nav_screens: "स्क्रीन", nav_download: "डाउनलोड", lang_label: "भाषा",
+      chip: "Android ऐप", hero_title: "सरल, साफ़ और सटीक कैलकुलेटर।",
+      hero_sub: "तेज़, सटीक और बिना भटकाव के। रोज़ के हिसाब के लिए ज़रूरी सब कुछ, पाँच भाषाओं में, लाइट और डार्क थीम के साथ।",
+      btn_small: "यहाँ से पाएँ", cta_note: "ऑफ़लाइन चलता है। साइन-अप नहीं।",
+      feat_title: "जो चाहिए वह सब, फ़ालतू कुछ नहीं", feat_sub: "रोज़ के तेज़ हिसाब के लिए बनाया गया।",
+      f1_t: "पूरे ऑपरेशन", f1_d: "जोड़, घटाव, गुणा (×), भाग (÷), प्रतिशत (%) और कोष्ठक, सही संक्रियाओं के क्रम के साथ।",
+      f2_t: "साफ़ और सटीक नतीजे", f2_d: "14.6699999 जैसे नतीजे नहीं। 6.13 + 8.54 सीधे 14.67 दिखता है।",
+      f3_t: "हिस्ट्री", f3_d: "हर गणना सहेजी जाती है। एक टैप में दोबारा खोलें या जब चाहें हटा दें।",
+      f4_t: "लाइट और डार्क थीम", f4_d: "दिन-रात आँखों को आराम। एक टैप में बदलें।",
+      f5_t: "पाँच भाषाएँ", f5_d: "तुर्की, अंग्रेज़ी, स्पेनिश, चीनी और हिंदी: ऐप आपकी भाषा बोलता है।",
+      f6_t: "हल्का और शांत", f6_d: "परेशान करने वाले विज्ञापन नहीं, साइन-अप नहीं। सहयोग हमेशा वैकल्पिक है।",
+      shots_title: "इसे चलते देखें", shots_sub: "बड़े बटन, साफ़ डिस्प्ले, कोई भीड़ नहीं।",
+      cap1: "साफ़ नतीजे", cap2: "हिस्ट्री", cap3: "डार्क थीम",
+      final_title: "आज ही आज़माएँ", final_sub: "Google Play से कैलकुलेटर डाउनलोड करें और सेकंडों में हिसाब शुरू करें।",
+      rights: "सर्वाधिकार सुरक्षित।", more_apps: "AkideSoft के और ऐप"
+    }
+  };
+
+  var select = document.getElementById('lang');
+  var desc = document.querySelector('meta[name="description"]');
+  var ogTitle = document.querySelector('meta[property="og:title"]');
+  var ogDesc = document.querySelector('meta[property="og:description"]');
+
+  function pick() {
+    var wanted = [];
+    try {
+      var q = new URLSearchParams(location.search).get('lang');
+      if (q) wanted.push(q);
+      var saved = localStorage.getItem('lang');
+      if (saved) wanted.push(saved);
+    } catch (e) {}
+    (navigator.languages || [navigator.language || 'en']).forEach(function (l) { wanted.push(l); });
+    for (var i = 0; i < wanted.length; i++) {
+      var code = String(wanted[i]).toLowerCase().slice(0, 2);
+      if (I18N[code]) return code;
+    }
+    return 'en';
+  }
+
+  function apply(code) {
+    var d = I18N[code] || I18N.en;
+    document.documentElement.lang = code;
+    document.title = d.title;
+    if (desc) desc.setAttribute('content', d.desc);
+    if (ogTitle) ogTitle.setAttribute('content', d.title);
+    if (ogDesc) ogDesc.setAttribute('content', d.desc);
+    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+      var key = el.getAttribute('data-i18n');
+      if (d[key] != null) el.textContent = d[key];
+    });
+    select.value = code;
+  }
+
+  select.addEventListener('change', function () {
+    try { localStorage.setItem('lang', select.value); } catch (e) {}
+    apply(select.value);
+  });
+
+  apply(pick());
+})();
+</script>
+</body>
+</html>
